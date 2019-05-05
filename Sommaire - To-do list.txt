@@ -1,0 +1,14 @@
+1) Présentation rapide des données présentes
+2) Mise en forme
+    - Gestion des données inconnues (NA)
+    - Variables qualitatives
+3) Analyse exploratoire
+4) Méthode avancée : possibilités
+    - représentation euclidienne
+    - ACP
+    - apprentissage automatique
+    - K-Means / K-means adaptatifs
+    - ??????
+5) Présentation des résultats
+    - Rapport
+    - Soutenance
