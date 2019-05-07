@@ -6,9 +6,12 @@
 4) Méthode avancée : possibilités
     - représentation euclidienne
     - ACP
-    - apprentissage automatique
-    - K-Means / K-means adaptatifs
-    - ??????
+	- voir les corrélations entre variables avant
+    - K-Means / K-means adaptatifs : des classes de transfert (intervalles de transfer fee)
+    - soit apprentissage automatique
+    - soit régression (linéaire pour commencer) pour déterminer transfer fee
+
+    - régression : quand on aura vu les méthodes
 5) Présentation des résultats
     - Rapport
     - Soutenance
