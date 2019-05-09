@@ -13,11 +13,14 @@ as.data.frame(table(transfers$Season))
 
 help(table)
 
+unique(sort(transfers$League_from))
 
-
-
-
+pays <- levels(transfers$League_from)[1:40]
+nrow(subset(transfers, League_from %in% pays))
+nrow(subset(transfers, League_to %in% pays))
+transfers2 <- subset(transfers, !(League_from %in% pays))
+transfers3 <- subset(transfers2, !(League_to %in% pays))
 
 # A faire
-   # Factorisation League_from et League_to (doublons, orthographe, langue)
    # Que faire des NA dans Market Value ?
+      # Etude de la corrélation -> remplacement par une moyenne
