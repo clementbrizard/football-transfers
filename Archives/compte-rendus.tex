@@ -1,0 +1,271 @@
+% !TEX encoding = IsoLatin
+%\documentclass[twoside]{article}
+\documentclass{article}
+\usepackage[francais]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{bbm}
+
+\usepackage[hmarginratio=1:1,top=32mm,columnsep=20pt]{geometry}
+\usepackage{multirow}
+\usepackage{multicol} % Style double colonne 
+\usepackage{abstract} % Customization de l'abstract 
+\usepackage{fancyhdr} % en-têtes et pieds de page 
+\usepackage{float} % Nécessaire pour les tables et figures dans l'environnement double colonne 
+
+\usepackage[colorlinks=true,linkcolor=red,urlcolor=blue,filecolor=green]{hyperref} % hyperliens 
+
+%\usepackage{dtk-logos}
+
+% En-têtes et pieds de page 
+\pagestyle{fancy}  
+\fancyhead{} % Blank out the default header
+\fancyfoot{} % Blank out the default footer
+\fancyhead[C]{Note sur la rédaction des compte-rendus} % Custom header text
+\fancyfoot[RO,LE]{\thepage} % Custom footer text
+
+%\setlength{\parskip}{1ex} % espace entre paragraphes 
+
+\newcommand{\bsx}{\boldsymbol{x}}
+\newcommand{\bsX}{\boldsymbol{X}}
+\newcommand{\transp}{^{\mathrm{t}}}
+
+
+%----------------------------------------------------------------------------------------
+
+\title{Directives pour la rédaction des compte-rendus de projets}
+
+\author{Benjamin Quost}
+\date{\today}
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Insert title
+
+\thispagestyle{fancy} % All pages have headers and footers
+
+
+%----------------------------------------------------------------------------------------
+
+\begin{abstract}
+
+Vous avez deux projets à réaliser au cours de l'UV, en binômes, qui ont une double vocation pédagogique et d'évaluation. Ces projets ont globalement pour objectif d'appliquer les méthodes étudiées au cours du semestre dans différentes situations, sur des jeux de données simulées ou réelles. Nous attendons des
+étudiants qu'ils donnent la mesure de leur compréhension de ces méthodes et du bénéfice qu'ils peuvent tirer de leur utilisation, au travers d'un compte-rendu. 
+Le compte-rendu rédigé par le binôme sera rendu sur le Moodle \emph{dans les temps impartis} (les retards sont pénalisés). Il est rendu au format électronique, \emph{impérativement au format PDF}. 
+Le présent document donne quelques directives pour la rédaction de ces compte-rendus. 
+Vous pouvez également en utiliser le code source comme modèle pour rédiger vos compte-rendus avec \LaTeX{}. Nous recommandons vivement l'usage de ce logiciel qui favorisera la conception de documents bien structurés et esthétiques. 
+
+\end{abstract}
+
+
+%----------------------------------------------------------------------------------------
+
+\begin{multicols}{2} % Style double colonne 
+
+\section{Introduction}
+
+La rédaction d'un compte-rendu est toujours un exercice difficile. Il faut être concis, c'est-à-dire suffisamment synthétique sans pour autant omettre d'informations essentielles. Au total, un compte-rendu ne devrait pas dépasser dix à douze pages ; il est souhaitable qu'il respecte la structure suivante : 
+\begin{enumerate}
+\item une introduction, rappelant les objectifs généraux du TP ; 
+\item une partie principale, articulée suivant la problématique d'étude ; 
+\item une conclusion, résumant les déductions, et présentant éventuellement les perspectives d'études plus approfondies ou complémentaires (mais dont la mise en \oe{}uvre dépasserait le cadre du TP) ; 
+\item d'éventuelles annexes contenant le code, les figures (si elles sont en nombre important et que leur placement en annexe ne nuit pas à la compréhension), ou des développements de calculs un peu longs. 
+\end{enumerate}
+
+Pour la rédaction des compte-rendus, vous pouvez utiliser \LaTeX{}. Pourquoi ce choix ? Il y a de nombreuses raisons ; nous en citerons cinq : 
+\begin{itemize}
+\item contenu et mise en page sont traités distinctement : il est donc très facile d'adapter la mise en page, sans (trop) batailler (par exemple, le passage d'un style \og double colonne \fg{} à un style \og simple colonne \fg{} ne nécessite que de commenter deux lignes de commande dans le code source du document) ; 
+\item l'utilisation de balises permet de même une très grande flexibilité lors de la manipulation du contenu : par exemple, il est facile d'intervertir des paragraphes entiers, des figures, des tableaux, des équations sans avoir à se soucier de leur renumérotation ; 
+\item la mise en page est rigoureuse et respecte par défaut les règles d'usage en typographie ; 
+\item \LaTeX est un logiciel extrêmement performant, développé et maintenu par une large communauté d'utilisateurs, tout en restant libre et gratuit ; 
+\item ça fait de beaux documents. 
+\end{itemize}
+Le prix à payer est de consacrer un peu de temps à la découverte de ce langage de \og programmation de texte \fg{} qu'est \LaTeX{}. A contrario des clichés, ce n'est pas si difficile ; et l'existence d'une documentation très abondante et de fichiers types rend la tâche encore plus aisée. 
+Soulignons que le retour sur investissement est rapide et conséquent, compte-tenu des facilités qu'offre \LaTeX{} à bien des niveaux (mise en forme des équations, etc). 
+
+Dans ce document, vous trouverez quelques remarques générales concernant le contenu d'un compte-rendu au paragraphe~\ref{sec:contenu}. Le paragraphe~\ref{sec:forme} résume quelques règles élémentaires de présentation pour réaliser des documents agréables à lire. L'utilisation de formules mathématiques avec \LaTeX{} est abordée au paragraphe~\ref{sec:maths}; l'affichage de code, au paragraphe~\ref{sec:code}, et les environnements permettant de créer des tables et des figures au paragraphe~\ref{sec:figures}. 
+
+
+%------------------------------------------------
+
+\section{Contenu du rapport}\label{sec:contenu}
+
+Dans le rapport, reproduisez les grandes lignes du cheminement intellectuel qui vous a conduit aux résultats présentés. De même, les méthodes ou algorithmes utilisés doivent être décrits succinctement (sans pour autant que la précision et la clarté de vos explications ne soient sacrifiées). L'inclusion des codes-sources dans le compte-rendu est à éviter, à moins qu'ils n'aient été explicitement demandés, ou qu'ils présentent un intérêt particulier. Ils devront alors être fournis en annexe, pour ne pas perturber la lecture du document. 
+
+L'analyse des résultats obtenus doit bien entendu dépasser la simple constatation : \og la méthode marche mal \fg{}, ou encore \og la méthode donne tels et tels résultats \fg{} ne sont pas acceptables. La réflexion doit s'inscrire dans une démarche d'analyse globale où l'on recherchera la cohérence. Certains résultats obtenus suite à une manipulation appellent parfois la mise en \oe{}uvre d'autres méthodes, afin d'approfondir l'analyse : par exemple, vous pouvez compléter une représentation graphique, qui vous met sur une piste, par un test statistique. 
+
+
+%------------------------------------------------
+
+\section{Présentation}\label{sec:forme}
+
+Un bon document doit être simple. Les fioritures fatiguent à long terme l'\oe{}il du lecteur ; et un correcteur fatigué est un correcteur dangereux. Pour cette raison, n'abusez pas d'effets de style ; la mise en valeur au moyen de caractères \textbf{gras} ou d'un \underline{soulignage du texte} sont à éviter (préférez \emph{l'italique}). Les {\footnotesize changements} désordonnés de {\huge taille} {\Large ou} {\large de} \textsf{style de police} nuisent à l'harmonie graphique du document, et sont donc à proscrire également. L'utilisation du gras peut toutefois être intéressante dans un cadre mathématique, par exemple pour distinguer un vecteur d'une variable (voir le paragraphe \ref{sec:maths}) ; de même, avec une police spécifique, on peut distinguer du code, des commandes, ou des noms de fonctions du texte classique. 
+
+Un document rédigé en pleine page (\og simple colonne \fg{}) est plus agréable à lire que s'il est présenté sur deux colonnes. Néanmoins, ce dernier style permet de faire figurer davantage d'informations sur une page. Préférez le style double colonne au simple colonne dans une police plus petite (qui fatigue davantage le lecteur, et un correcteur fatigué\dots). 
+De même, il n'est pas besoin de rajouter des sauts de ligne ou des espaces, \LaTeX{} fait ça très bien tout seul. N'abusez pas des notes de bas de page, qui fractionnent la lecture. Une simple précision pourra rester dans le corps du texte (par exemple entre parenthèses) ; si une information semble nécessiter plus de place, c'est qu'elle est importante et qu'il convient de la développer \footnote{Les notes de bas de page sont plutôt dévolues aux appartés.}. 
+
+
+%------------------------------------------------
+
+\section{Mathématiques et \LaTeX{}}\label{sec:maths}
+
+L'un des gros avantages de \LaTeX{} par rapport aux autres logiciels est la facilité avec laquelle on peut gérer les formules mathématiques. Vous pouvez ainsi insérer des équations seules, comme c'est le cas pour l'équation \eqref{eqn:poly2-1D} : 
+\begin{equation}\label{eqn:poly2-1D}
+f(x) = a x^2 + b x + c , 
+\end{equation}
+ou des suites d'équations (alignées, c'est plus propre) comme les équations \eqref{eqn:poly2-2D-1}-\eqref{eqn:poly2-2D-2} : 
+\begin{eqnarray}
+\label{eqn:poly2-2D-1} f(\bsx) & = & \bsx\transp A \bsx + b\transp \bsx , \\ 
+\label{eqn:poly2-2D-2} \bsx & = & (x_1, x_2)\transp , 
+\end{eqnarray}
+où $A$ et $b$ sont définis par : 
+\begin{equation*}
+A = \left(\begin{array}{cc}
+a_{11} & a_{12} \\ 
+a_{21} & a_{22} 
+\end{array}\right) , 
+\quad b = \left(\begin{array}{cc}
+b_1 \\ 
+b_2 
+\end{array}\right) . 
+\end{equation*}
+Remarquons que cette dernière équation n'a pas été étiquetée, contrairement aux deux précédentes (équations \eqref{eqn:poly2-1D} à \eqref{eqn:poly2-2D-2}) : on ne pourra y faire référence dans le texte qu'avec une périphrase, ce qui nuit à la clarté et à la concision du propos. 
+Vous pouvez enfin faire figurer une équation sur plusieurs lignes, si elle est longue --- voir par exemple l'équation~\eqref{eqn:poly2-2D-dev}. 
+\begin{multline}
+\label{eqn:poly2-2D-dev} f(x_1,x_2) = a_{11} x_1^2 + a_{22} x_2^2 + a_{21} x_1 x_2 \\ + a_{12} x_1 x_2 + b_1 x_1 + b_2 x_2 . 
+\end{multline}
+Les développements mathématiques complexes ou les informations d'intérêt secondaire (comme les longs rappels) doivent autant que possible ne pas figurer dans le corps du texte, mais dans un paragraphe à part ou en annexe. L'annexe~\ref{ann:loinormale} donne un exemple avec des rappels concernant la loi normale. 
+
+En \LaTeX{}, si l'on emploie une même commande de manière répétée, il est possible de créer des raccourcis (voir par exemple l'en-tête du fichier source de ce document pour les symboles \og$\bsx$\fg{} et \og$\transp$\fg{}). On pourra se reporter aux guides \cite{mon:oetiker95,mon:oetiker95b} pour plus de renseignements concernant la rédaction de formules ou la manipulation de symboles. 
+
+
+%------------------------------------------------
+
+\section{Code source}\label{sec:code}
+
+Comme nous l'avons dit plus haut, le corps du texte ne devrait pas comporter de code source complexe, comme des fonctions ou des scripts : cela nuit à la clarté du document. La mention d'un petit nombre de commandes est tolérable, si c'est nécessaire. Du code plus complexe pourra être communiqué en annexe. 
+
+En \LaTeX{}, une manière simple et intelligible de signifier qu'un terme correspond à du code source ou à une commande consiste à utiliser l'environnement \verb?verbatim? (voir l'annexe~\ref{ann:codecrabs}). La commande \verb?\verb? permettra de faire référence à du code directement dans le texte. 
+
+
+%------------------------------------------------
+
+\section{Tableaux, figures et \LaTeX{}}\label{sec:figures}
+
+D'une manière générale, les informations communiquées dans un compte-rendu, et donc a fortiori dans un tableau ou dans une figure, doivent être autant que possible lisibles et informatives. On prendra soin de ne pas communiquer trop d'informations : cela noie le message que l'on souhaite faire passer, et irrite le lecteur qui doit faire le tri alors que cette tâche incombe à l'auteur du document. Il est judicieux de respecter un certain nombre de règles de bon sens. 
+
+On évitera d'afficher trop de tableaux ou de figures figures. Ceux qui seront choisis devront être optimisés, de manière à communiquer autant d'informations \emph{pertinentes} que possible en un minimum de place. \'Evitez les tableaux ou figures orphelins (non numérotés, sans référence, laissés à eux-mêmes dans le corps du texte) ! Enfin, par convention, la légende se met en haut pour un tableau et en bas pour une figure. 
+
+On apportera une attention particulière à la lisibilité : éviter les valeurs avec trop de chiffres significatifs, utiliser un style épuré (le tableau~\ref{tab:exemple}, par exemple, est défini avec un minimum de lignes séparatrices). On n'oubliera pas d'indiquer les échelles sur les graphiques, d'étiqueter les axes, etc. 
+Les couleurs et les symboles permettent d'ajouter une information supplémentaire parfois précieuse (voir par exemple la figure~\ref{fig:iris1}, où la couleur représente l'espèce d'iris). Toutefois, la couleur pouvant disparaître à l'impression, on préférera parfois l'utilisation de symboles spécifiques. 
+
+\begin{table}[H]
+\begin{center}
+\caption{\label{tab:exemple}Exemple de tableau (la légende se trouve par convention en haut).}
+\begin{tabular}{c|cc}
+\multirow{2}{*}{UV} & place dans & \multirow{2}{*}{remarque} \\
+ & le cursus & \\
+\hline
+SY02 & TC branche & classe \\
+SY09 & filière & top \\
+SY19 & filière & exceptionnel 
+\end{tabular}
+\end{center}
+\end{table}
+
+On évitera les tableaux ou graphiques peu informatifs ou sans intérêt, qui polluent un document. Par exemple, si l'on cherche à comparer différentes populations en utilisant des diagrammes en boîte (\emph{boxplots}), on les juxtaposera dans la même figure. L'affichage des valeurs prises par une variable en fonction de l'indice des individus dans le jeu de données (figure~\ref{fig:iris2}), erreur trop souvent rencontrée dans les compte-rendus, est typique de ce qu'il faut éviter. 
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.4\textwidth]{acp-iris.pdf}
+\caption{\label{fig:iris1}Représentation des Iris de Fisher dans le premier plan factoriel, générée avec R (par convention, la légende se met en bas).}
+\end{center}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.4\textwidth]{iris-seplen.pdf}
+\caption{\label{fig:iris2}Graphique peu informatif, pas optimisé (on perd une dimension), et en plus moche : à proscrire.}
+\end{center}
+\end{figure}
+
+\LaTeX{} permet de créer des tableaux et des figures assez facilement, pour ensuite y faire référence dans votre rapport. Vous trouverez des exemples dans ce compte-rendu, avec le tableau~\ref{tab:exemple} et les figures \ref{fig:iris1} et \ref{fig:iris2}. 
+
+Rien n'est parfait, et \LaTeX{} ne fait pas exception à cette règle. La disposition des tableaux et figures (appelés \og objets flottants \fg{}) est le point qui peut être délicat lors de la rédaction d'un document : la compilation peut donner un résultat pathologique en les positionnant dans des endroits peu désirables (c'est particulièrement vrai en style \og double colonne \fg{}, qui gère plus ou moins bien les objets flottants). 
+Il peut alors être nécessaire d'essayer de positionner soi-même le code correspondant aux objets flottants à différents endroits dans le code source du document, en recompilant à chaque fois, pour obtenir une configuration satisfaisante. 
+
+
+%------------------------------------------------
+
+\section{Conclusion}
+
+Ces conseils ont pour objectif de vous permettre de rédiger à long terme des documents plus agréables et faciles à lire. L'utilisation d'un logiciel tel que \LaTeX{} vous poussera à rédiger un compte-rendu avec rigueur, en sélectionnant et en structurant l'information que vous souhaitez restituer. Cette exigence n'est pas une perte de temps : elle sera profitable à la qualité de votre document, qui sera plus agréable à lire par vos correcteurs ou lors de vos révisions. Soulignons que la qualité de la présentation des compte-rendus sera prise en compte dans la correction. 
+
+Ce document ne dispense que des conseils élémentaires de rédaction et de mise en forme, et laisse de côté certains aspects jugés d'une importance marginale pour un compte-rendu de TP (comme par exemple la bibliographie, intégrée ici directement au document, après les annexes). %Il existe un programme beaucoup plus performant associé à \LaTeX{} (BibTeX) permettant de la traiter dans un fichier à part. 
+Il existe de nombreux documents permettant d'aller plus loin avec \LaTeX{} ou décrivant ses extensions (bibliographie, conception de diapos, etc) ; on ne citera ici qu'une introduction générale \cite{mon:oetiker95}, et sa version française \cite{mon:oetiker95b} un peu plus ancienne). 
+
+
+%------------------------------------------------
+
+% Annexes éventuelles 
+
+\appendix % la commande \appendix change la numérotation des paragraphes 
+
+\section{Loi normale}\label{ann:loinormale}
+
+\subsection{Définition}
+
+La fonction de densité d'un vecteur aléatoire $\bsX$ distribué suivant une loi normale multivariée d'espérance $\mu$ et de matrice de covariance $\Sigma$ est 
+\begin{equation}
+\displaystyle f_X(\bsx) = \frac{1}{(2\pi)^{\frac{p}{2}}|\Sigma|^{\frac{1}{2}}} \exp \left( (\bsx-\mu)\transp \Sigma^{-1} (\bsx-\mu) \right) , 
+\end{equation}
+où $\mu$ est un vecteur réel de dimensions $p \times 1$ et $\Sigma$ une matrice symétrique définie-positive de dimensions $p \times p$. 
+
+\subsection{Loi normale centrée-réduite}
+
+La figure~\ref{fig:dnorm} donne le tracé de la densité de la loi normale centrée-réduite. 
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.4\textwidth]{dnorm-plot.pdf}
+\caption{\label{fig:dnorm}Tracé de la fonction de densité de la loi normale centrée-réduite.}
+\end{center}
+\end{figure}
+
+
+\section{Chargement de données}\label{ann:codecrabs}
+
+La commande suivante permet de charger les données \verb?crabs?: 
+\begin{verbatim}
+library(MASS)
+data(crabs)
+\end{verbatim}
+
+
+%----------------------------------------------------------------------------------------
+
+\begin{thebibliography}{99} % Bibliography - this is intentionally simple in this template
+
+\bibitem{mon:oetiker95}
+Tobias Oetiker, Hubert Partl, Irene Hyna and Elisabeth Schlegl (2015). 
+\newblock The Not So Short Introduction to \LaTeXe. 
+\newblock {\em Available online at \href{https://tobi.oetiker.ch/lshort/lshort.pdf}{this URL}}. 
+
+\bibitem{mon:oetiker95b}
+Tobias Oetiker, Hubert Partl, Irene Hyna et Elisabeth Schlegl (2011). 
+\newblock Une courte~(?) introduction à \LaTeXe. 
+\newblock {\em Disponible en ligne à \href{ftp://ctan.tug.org/tex-archive/info/lshort/french/lshort-fr.pdf}{cette URL}}. 
+
+\end{thebibliography}
+
+%----------------------------------------------------------------------------------------
+
+\end{multicols}
+
+\end{document}
