@@ -7,22 +7,60 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r load data, echo = FALSE}
+setwd("~/Documents/UTC/GI04/SY09/Projet/sy09")
+transfers <- read.csv("data/top250-00-19.csv", header = T)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Taille du dataset
+## Nombre de transferts enregistrés
+```{r}
+nrow(transfers)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Le dataset répertorie donc 4700 transferts. Il est sensé contenir les 250 transferts les plus élevés pour chaque saison des dix-neuf dernières saisons :
+```{r}
+length(unique(transfers$Season))
+```
+Or : 
+```{r}
+19 * 250
+```
+Nous ne disposons donc pas exactement de 250 transferts par saison :
+```{r}
+freq <- table(transfers$Season)
+sort(freq[freq != 250])
+```
+Il manque des transferts pour 15 saisons sur 19 mais ce n'est jamais plus de 8 transferts sur 250, ce qui ne devrait pas fausser les mesures de l'influence de la saison que l'on pourra faire par la suite.
+
+## Nombre de prédicteurs
+```{r}
+ncol(transfers)
+colnames(transfers)
+```
+
+
+# Nettoyage des données
+## Vérification des classes des prédicteurs
+```{r}
+sapply(transfers, class)
+```
+
+On convertit la variable "Name" au type `character`, utilisé en R pour représenter les `string`. On pourrait dire que le nom est un facteur mais la variable prend tellement de valeurs que cela semble plus pertinent d'en faire un type `character`. On ne le fait pas pour les équipes et les ligues, qui prennent moins de valeurs différentes et peuvent a priori avoir une influence sur le prix des joueurs, contrairement à leur nom.
+```{r}
+transfers$Name <- as.character(transfers$Name)
+class(transfers$Name)
+```
+
+## Vérification cohérence des données
+### Valeurs manquantes
+```{r}
+summary(transfers)
+```
+Seule la colonne "Market_value" contient des valeurs nulles, à raison de 1260 sur 4700 soit 27 %.
+```{r}
+na <- transfers[is.na(transfers$Market_value) == T,]
+table(na$Season)
+```
+
+L'essentiel des valeurs manquantes se concenttre donc dans les cinq premières saisons. Nous n'allons pas supprimer les transferts correspondants car cela nous priverait d'une proportion non négligeable des données pour les calculs non basés sur la "Market_value". Pour les calculs l'intégrant, on devra veiller à exclure les transferts des cinq premières saisons.
