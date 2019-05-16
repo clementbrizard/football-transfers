@@ -52,7 +52,7 @@ class(transfers$Name)
 ```
 
 ## Vérification cohérence des données
-### Valeurs manquantes
+### Valeurs manquantes ou nulles
 ```{r}
 summary(transfers)
 ```
@@ -61,5 +61,42 @@ Seule la colonne "Market_value" contient des valeurs nulles, à raison de 1260 s
 na <- transfers[is.na(transfers$Market_value) == T,]
 table(na$Season)
 ```
+L'essentiel des valeurs manquantes se concentre donc dans les cinq premières saisons. Nous n'allons pas supprimer les transferts correspondants car cela nous priverait d'une proportion non négligeable des données pour les calculs non basés sur la "Market_value". Pour les calculs l'intégrant, on devra veiller à exclure les transferts des cinq premières saisons.
 
-L'essentiel des valeurs manquantes se concenttre donc dans les cinq premières saisons. Nous n'allons pas supprimer les transferts correspondants car cela nous priverait d'une proportion non négligeable des données pour les calculs non basés sur la "Market_value". Pour les calculs l'intégrant, on devra veiller à exclure les transferts des cinq premières saisons.
+Par ailleurs, on voit avec la fonction `summary` que le minimum de la colonne "Age" est 0. On retire le transfert correspondant :
+```{r}
+table(transfers$Age)
+```
+Un seul transfert étant concerné, nous excluons cette ligne :
+```{r}
+transfers <- transfers[transfers$Age != 0,]
+nrow(transfers)
+```
+
+## Valeurs incohérentes
+On s'intéresse aux ligues :
+```{r}
+levels(transfers$League_from)
+```
+Les 40 premières valeurs sont des valeurs de pays. Les autres valeurs sont bien des ligues. On regarde combien de transferts ont une valeur de pays et non de ligue dans une des deux colonnes de ligues :
+```{r}
+pays_League_from <- levels(transfers$League_from)[1:40]
+pays_League_to <- levels(transfers$League_to)[1:24]
+pays <- unique(c(pays_League_from, pays_League_to))
+nrow(subset(transfers, League_from %in% pays | League_to %in% pays))
+```
+444 transferts sur 4699 sont concernés, soit presque 10 %. Nous décidons néanmoins de nous en débarrasser :
+```{r}
+transfers <- subset(transfers, !(League_from %in% pays | League_to %in% pays))
+nrow(transfers)
+```
+
+# Synthèse
+Nous avons changé le type de la conomme "Name", remaqrqué que 27 % des valeurs de la colonne "Market_value étaient manquantes, principalement sur les cinq premières saisons, supprimé l'unique transfert où l'âge du joueur était nul, et supprimé les 10 % de transferts donc la colonne "League_from" ou "League_to" avait pour valeur un pays.
+
+# Première étude des données
+```{r}
+length(levels(transfers$Team_from))
+length(levels(transfers$Team_to))
+```
+Les 4699 transferts se répartissent en 570 clubs vendeurs et 325 clubs acheteurs. Cette différence pourraiy s'expliquer par le fait que certains clubs vendent cher des joueurs dont ils ont fait augmenter la valeur après les avoir acheté à faible prix. Il y a une concentration des mêmes clubs acheteurs dans les transferts les plus élevés.
