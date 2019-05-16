@@ -1,5 +1,5 @@
-setwd("~/Documents/UTC/GI04/SY09/Projet/sy09")
-transfers <- read.csv("data/top250-00-19.csv", header = T)
+transfers <- read.csv("../data/top250-00-19.csv", header = T)
+
 summary(transfers)
 
 colnames(transfers)
