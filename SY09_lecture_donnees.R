@@ -21,6 +21,10 @@ nrow(subset(transfers, League_to %in% pays))
 transfers2 <- subset(transfers, !(League_from %in% pays))
 transfers3 <- subset(transfers2, !(League_to %in% pays))
 
+# factorisation des ligues par pays
+pays <- as.vector(levels(transfers$League_from))
+pays <- pays[1:40]
+
 # A faire
    # Que faire des NA dans Market Value ?
       # Etude de la corrélation -> remplacement par une moyenne
