@@ -1,4 +1,5 @@
-transfers <- read.csv("top-250-football-transfers-from-2000-to-2018/top250-00-19.csv", header = T)
+setwd("~/Documents/UTC/GI04/SY09/Projet/sy09")
+transfers <- read.csv("data/top250-00-19.csv", header = T)
 summary(transfers)
 
 colnames(transfers)
