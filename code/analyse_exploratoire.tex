@@ -1,0 +1,508 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={Analyse exploratoire},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{Analyse exploratoire}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+\maketitle
+
+\hypertarget{taille-du-dataset}{%
+\section{Taille du dataset}\label{taille-du-dataset}}
+
+\hypertarget{nombre-de-transferts-enregistres}{%
+\subsection{Nombre de transferts
+enregistrés}\label{nombre-de-transferts-enregistres}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{nrow}\NormalTok{(transfers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4700
+\end{verbatim}
+
+Le dataset répertorie donc 4700 transferts. Il est sensé contenir les
+250 transferts les plus élevés pour chaque saison des dix-neuf dernières
+saisons :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{length}\NormalTok{(}\KeywordTok{unique}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Season))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 19
+\end{verbatim}
+
+Or :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DecValTok{19} \OperatorTok{*}\StringTok{ }\DecValTok{250}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4750
+\end{verbatim}
+
+Nous ne disposons donc pas exactement de 250 transferts par saison :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{freq <-}\StringTok{ }\KeywordTok{table}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Season)}
+\KeywordTok{sort}\NormalTok{(freq[freq }\OperatorTok{!=}\StringTok{ }\DecValTok{250}\NormalTok{])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## 2003-2004 2002-2003 2017-2018 2010-2011 2018-2019 2014-2015 2005-2006 
+##       242       244       244       245       245       246       247 
+## 2000-2001 2004-2005 2007-2008 2012-2013 2015-2016 2006-2007 2009-2010 
+##       248       248       248       248       248       249       249 
+## 2011-2012 
+##       249
+\end{verbatim}
+
+Il manque des transferts pour 15 saisons sur 19 mais ce n'est jamais
+plus de 8 transferts sur 250, ce qui ne devrait pas fausser les mesures
+de l'influence de la saison que l'on pourra faire par la suite.
+
+\hypertarget{nombre-de-predicteurs}{%
+\subsection{Nombre de prédicteurs}\label{nombre-de-predicteurs}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{ncol}\NormalTok{(transfers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 10
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{colnames}\NormalTok{(transfers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "Name"         "Position"     "Age"          "Team_from"   
+##  [5] "League_from"  "Team_to"      "League_to"    "Season"      
+##  [9] "Market_value" "Transfer_fee"
+\end{verbatim}
+
+\hypertarget{nettoyage-des-donnees}{%
+\section{Nettoyage des données}\label{nettoyage-des-donnees}}
+
+\hypertarget{verification-des-classes-des-predicteurs}{%
+\subsection{Vérification des classes des
+prédicteurs}\label{verification-des-classes-des-predicteurs}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{sapply}\NormalTok{(transfers, class)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##         Name     Position          Age    Team_from  League_from 
+##     "factor"     "factor"    "integer"     "factor"     "factor" 
+##      Team_to    League_to       Season Market_value Transfer_fee 
+##     "factor"     "factor"     "factor"    "integer"    "integer"
+\end{verbatim}
+
+On convertit la variable ``Name'' au type \texttt{character}, utilisé en
+R pour représenter les \texttt{string}. On pourrait dire que le nom est
+un facteur mais la variable prend tellement de valeurs que cela semble
+plus pertinent d'en faire un type \texttt{character}. On ne le fait pas
+pour les équipes et les ligues, qui prennent moins de valeurs
+différentes et peuvent a priori avoir une influence sur le prix des
+joueurs, contrairement à leur nom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{transfers}\OperatorTok{$}\NormalTok{Name <-}\StringTok{ }\KeywordTok{as.character}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Name)}
+\KeywordTok{class}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Name)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "character"
+\end{verbatim}
+
+\hypertarget{verification-coherence-des-donnees}{%
+\subsection{Vérification cohérence des
+données}\label{verification-coherence-des-donnees}}
+
+\hypertarget{valeurs-manquantes-ou-nulles}{%
+\subsubsection{Valeurs manquantes ou
+nulles}\label{valeurs-manquantes-ou-nulles}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{summary}\NormalTok{(transfers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      Name                         Position         Age       
+##  Length:4700        Centre-Forward    :1218   Min.   : 0.00  
+##  Class :character   Centre-Back       : 714   1st Qu.:22.00  
+##  Mode  :character   Central Midfield  : 487   Median :24.00  
+##                     Attacking Midfield: 426   Mean   :24.34  
+##                     Defensive Midfield: 411   3rd Qu.:27.00  
+##                     Right Winger      : 305   Max.   :35.00  
+##                     (Other)           :1139                  
+##      Team_from            League_from        Team_to    
+##  Inter    :  68   Premier League: 608   Inter    :  97  
+##  Spurs    :  63   Serie A       : 602   Chelsea  :  96  
+##  Juventus :  59   Ligue 1       : 428   Man City :  94  
+##  Chelsea  :  57   LaLiga        : 418   Spurs    :  93  
+##  FC Porto :  56   1.Bundesliga  : 265   Juventus :  87  
+##  Liverpool:  56   Série A       : 199   Liverpool:  85  
+##  (Other)  :4341   (Other)       :2180   (Other)  :4148  
+##           League_to          Season      Market_value      
+##  Premier League:1256   2001-2002: 250   Min.   :    50000  
+##  Serie A       : 739   2008-2009: 250   1st Qu.:  3500000  
+##  LaLiga        : 525   2013-2014: 250   Median :  6000000  
+##  1.Bundesliga  : 422   2016-2017: 250   Mean   :  8622469  
+##  Ligue 1       : 397   2006-2007: 249   3rd Qu.: 10000000  
+##  Premier Liga  : 328   2009-2010: 249   Max.   :120000000  
+##  (Other)       :1033   (Other)  :3202   NA's   :1260       
+##   Transfer_fee      
+##  Min.   :   825000  
+##  1st Qu.:  4000000  
+##  Median :  6500000  
+##  Mean   :  9447586  
+##  3rd Qu.: 10820000  
+##  Max.   :222000000  
+## 
+\end{verbatim}
+
+Seule la colonne ``Market\_value'' contient des valeurs nulles, à raison
+de 1260 sur 4700 soit 27 \%.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{na <-}\StringTok{ }\NormalTok{transfers[}\KeywordTok{is.na}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Market_value) }\OperatorTok{==}\StringTok{ }\NormalTok{T,]}
+\KeywordTok{table}\NormalTok{(na}\OperatorTok{$}\NormalTok{Season)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## 2000-2001 2001-2002 2002-2003 2003-2004 2004-2005 2005-2006 2006-2007 
+##       248       250       244       242       189        28        20 
+## 2007-2008 2008-2009 2009-2010 2010-2011 2011-2012 2012-2013 2013-2014 
+##        13         7         2         4         1         2         2 
+## 2014-2015 2015-2016 2016-2017 2017-2018 2018-2019 
+##         1         0         1         3         3
+\end{verbatim}
+
+L'essentiel des valeurs manquantes se concentre donc dans les cinq
+premières saisons. Nous n'allons pas supprimer les transferts
+correspondants car cela nous priverait d'une proportion non négligeable
+des données pour les calculs non basés sur la ``Market\_value''. Pour
+les calculs l'intégrant, on devra veiller à exclure les transferts des
+cinq premières saisons.
+
+Par ailleurs, on voit avec la fonction \texttt{summary} que le minimum
+de la colonne ``Age'' est 0. On retire le transfert correspondant :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{table}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Age)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##   0  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31 
+##   1   1  10  23  82 165 302 371 461 519 536 524 481 404 327 223 157  59 
+##  32  33  34  35 
+##  30  15   5   4
+\end{verbatim}
+
+Un seul transfert étant concerné, nous excluons cette ligne :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{transfers <-}\StringTok{ }\NormalTok{transfers[transfers}\OperatorTok{$}\NormalTok{Age }\OperatorTok{!=}\StringTok{ }\DecValTok{0}\NormalTok{,]}
+\KeywordTok{nrow}\NormalTok{(transfers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4699
+\end{verbatim}
+
+\hypertarget{valeurs-incoherentes}{%
+\subsection{Valeurs incohérentes}\label{valeurs-incoherentes}}
+
+On s'intéresse aux ligues :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{levels}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{League_from)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   [1] " Argentina"                     " Australia"                    
+##   [3] " Brazil"                        " Bulgaria"                     
+##   [5] " Canada"                        " Chile"                        
+##   [7] " China"                         " Colombia"                     
+##   [9] " Croatia"                       " Czech Republic"               
+##  [11] " Denmark"                       " Ecuador"                      
+##  [13] " England"                       " Finland"                      
+##  [15] " France"                        " Ghana"                        
+##  [17] " Iran"                          " Korea, South"                 
+##  [19] " Latvia"                        " Mexico"                       
+##  [21] " Moldova"                       " Paraguay"                     
+##  [23] " Peru"                          " Portugal"                     
+##  [25] " Qatar"                         " Romania"                      
+##  [27] " Russia"                        " Saudi Arabia"                 
+##  [29] " Scotland"                      " Serbia"                       
+##  [31] " Slovakia"                      " South Africa"                 
+##  [33] " Spain"                         " Sweden"                       
+##  [35] " Tunisia"                       " Ukraine"                      
+##  [37] " United Arab Emirates"          " United States"                
+##  [39] " Uruguay"                       " Venezuela"                    
+##  [41] "1.Bundesliga"                   "1.Division"                    
+##  [43] "1.HNL"                          "1.Lig"                         
+##  [45] "1.Liga gr. 1"                   "2.Bundesliga"                  
+##  [47] "2ª B - Grupo I"                 "2ª B - Grupo III"              
+##  [49] "3.Liga"                         "A Grupa - Championship gr."    
+##  [51] "Allsvenskan"                    "Auf-/Abstiegsrunde NLA/NLB"    
+##  [53] "Botola Pro"                     "Bundesliga"                    
+##  [55] "Challenge League"               "Championnat National"          
+##  [57] "Championship"                   "Ekstraklasa"                   
+##  [59] "Eliteserien"                    "Eredivisie"                    
+##  [61] "First Division"                 "HET Liga"                      
+##  [63] "J1 - 2nd Stage"                 "J1 League"                     
+##  [65] "J2 League"                      "Jupiler Pro League"            
+##  [67] "K League 1"                     "Korean FA Cup"                 
+##  [69] "LaLiga"                         "LaLiga2"                       
+##  [71] "League One"                     "Liga 1"                        
+##  [73] "Liga 1 - Championship group"    "Liga Águila II"                
+##  [75] "Liga MX Apertura"               "Liga MX Clausura"              
+##  [77] "Liga NOS"                       "Ligat ha'Al"                   
+##  [79] "Ligue 1"                        "Ligue 2"                       
+##  [81] "Ligue I Pro"                    "MLS"                           
+##  [83] "NB I."                          "OBOS-ligaen"                   
+##  [85] "Premier League"                 "Premier Liga"                  
+##  [87] "Premiership"                    "Primavera B"                   
+##  [89] "Primera B Nacional"             "Primera Div. Apertura"         
+##  [91] "Primera División"               "Professional League"           
+##  [93] "Proximus League"                "Regionalliga Nord"             
+##  [95] "Rel. Ligue 1"                   "Second Division (bis 03/04)"   
+##  [97] "Segunda División"               "Serie A"                       
+##  [99] "Série A"                        "Serie A Segunda Etapa"         
+## [101] "Serie B"                        "Série B"                       
+## [103] "Serie C - A"                    "Serie C - B"                   
+## [105] "Stars League"                   "Super League"                  
+## [107] "Süper Lig"                      "Superettan"                    
+## [109] "SuperLiga"                      "Superligaen"                   
+## [111] "Superligaen Championship round" "Torneo Final"                  
+## [113] "Torneo Inicial"                 "U18 Premier League"            
+## [115] "U19 Eredivisie"                 "UAE Gulf League"               
+## [117] "Virsliga"                       "Vysheyshaya Liga"
+\end{verbatim}
+
+Les 40 premières valeurs sont des valeurs de pays. Les autres valeurs
+sont bien des ligues. On regarde combien de transferts ont une valeur de
+pays et non de ligue dans une des deux colonnes de ligues :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pays_League_from <-}\StringTok{ }\KeywordTok{levels}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{League_from)[}\DecValTok{1}\OperatorTok{:}\DecValTok{40}\NormalTok{]}
+\NormalTok{pays_League_to <-}\StringTok{ }\KeywordTok{levels}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{League_to)[}\DecValTok{1}\OperatorTok{:}\DecValTok{24}\NormalTok{]}
+\NormalTok{pays <-}\StringTok{ }\KeywordTok{unique}\NormalTok{(}\KeywordTok{c}\NormalTok{(pays_League_from, pays_League_to))}
+\KeywordTok{nrow}\NormalTok{(}\KeywordTok{subset}\NormalTok{(transfers, League_from }\OperatorTok{%in%}\StringTok{ }\NormalTok{pays }\OperatorTok{|}\StringTok{ }\NormalTok{League_to }\OperatorTok{%in%}\StringTok{ }\NormalTok{pays))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 444
+\end{verbatim}
+
+444 transferts sur 4699 sont concernés, soit presque 10 \%. Nous
+décidons néanmoins de nous en débarrasser :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{transfers <-}\StringTok{ }\KeywordTok{subset}\NormalTok{(transfers, }\OperatorTok{!}\NormalTok{(League_from }\OperatorTok{%in%}\StringTok{ }\NormalTok{pays }\OperatorTok{|}\StringTok{ }\NormalTok{League_to }\OperatorTok{%in%}\StringTok{ }\NormalTok{pays))}
+\KeywordTok{nrow}\NormalTok{(transfers)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4255
+\end{verbatim}
+
+\hypertarget{synthese}{%
+\section{Synthèse}\label{synthese}}
+
+Nous avons changé le type de la conomme ``Name'', remaqrqué que 27 \%
+des valeurs de la colonne ``Market\_value étaient manquantes,
+principalement sur les cinq premières saisons, supprimé l'unique
+transfert où l'âge du joueur était nul, et supprimé les 10 \% de
+transferts donc la colonne''League\_from" ou ``League\_to'' avait pour
+valeur un pays.
+
+\hypertarget{premiere-etude-des-donnees}{%
+\section{Première étude des données}\label{premiere-etude-des-donnees}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{length}\NormalTok{(}\KeywordTok{levels}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Team_from))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 570
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{length}\NormalTok{(}\KeywordTok{levels}\NormalTok{(transfers}\OperatorTok{$}\NormalTok{Team_to))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 325
+\end{verbatim}
+
+Les 4699 transferts se répartissent en 570 clubs vendeurs et 325 clubs
+acheteurs. Cette différence pourraiy s'expliquer par le fait que
+certains clubs vendent cher des joueurs dont ils ont fait augmenter la
+valeur après les avoir acheté à faible prix. Il y a une concentration
+des mêmes clubs acheteurs dans les transferts les plus élevés.
+
+
+\end{document}

@@ -77,12 +77,12 @@ newdata <- transfers
 newdata$Age <- cut(transfers$Age, breaks = 10)
 newdata$Transfer_fee <- cut(transfers$Transfer_fee, breaks = 10)
 newdata$Market_value <- cut(transfers$Market_value, breaks = 10)
-
+newdata <- droplevels(newdata)
   # ACM
 
-install.packages("ade4", dep = TRUE)
+#install.packages("ade4", dep = TRUE)
 library(ade4)
-acm.transf <- dudi.acm(newdata) ## fonctionne pas et ce n'est pas ?? cause de Market_value m??me si ??a contient
+acm.transf <- dudi.acm(df = newdata,scannf = FALSE, nf = NA) ## fonctionne pas et ce n'est pas ?? cause de Market_value m??me si ??a contient
 # des Na. j ai fait des recherches et j'ai trouv?? ??a comme explication :
 
   ## un des probl??mes majeurs de l'analyse est le fait que les variables prises en compte comportent un tr??s 

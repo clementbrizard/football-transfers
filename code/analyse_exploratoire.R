@@ -58,6 +58,10 @@ for(i in 2:dim(transfers3)[2])
   }
 }
 
+levels(transfers3$Position) <- gsub(".*Back$|Sweeper", "Defender", levels(transfers3$Position))
+levels(transfers3$Position) <- gsub(".*Forward$|Second Striker|.*Winger$", "Forward", levels(transfers3$Position))
+levels(transfers3$Position) <- gsub(".*Midfield$", "Midfielder", levels(transfers3$Position))
+transfers3$Position
 # A faire
    # Que faire des NA dans Market Value ?
       # Etude de la corrélation -> remplacement par une moyenne
