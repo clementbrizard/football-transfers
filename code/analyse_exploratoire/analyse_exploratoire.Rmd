@@ -51,6 +51,13 @@ transfers$Name <- as.character(transfers$Name)
 class(transfers$Name)
 ```
 
+On convertit la variable "Season" en facteur ordonné :
+```{r}
+# we use the already alphabetical order of seasons
+transfers$Season <- as.ordered(transfers$Season)
+```
+
+
 ## Vérification cohérence des données
 ### Valeurs manquantes ou nulles
 ```{r}
@@ -58,16 +65,27 @@ summary(transfers)
 ```
 Seule la colonne "Market_value" contient des valeurs nulles, à raison de 1260 sur 4700 soit 27 %.
 ```{r}
-na <- transfers[is.na(transfers$Market_value) == T,]
-table(na$Season)
+# extract rows where Market_value is na
+null_market_value <- transfers[is.na(transfers$Market_value) == T,]
+
+# make a contingency table by season
+cont <- table(null_market_value$Season)
+cont
+
+# proportion of the first five seasons
+sum(cont[1:5])
+sum(cont[1:5]) / sum(cont)
+
 ```
-L'essentiel des valeurs manquantes se concentre donc dans les cinq premières saisons. Nous supprimons les lignes correspondantes :
+L'essentiel des valeurs manquantes se concentre donc dans les cinq premières saisons. Nous supprimons les lignes correspondantes, qui représentent 26 % des transferts :
 
 ```{r}
+# proportion of transfers that we will remove
+nrow(transfers[transfers$Season < "2005-2006",]) / nrow(transfers)
 
+# extraction using the order on seasons
+transfers <- transfers[transfers$Season > "2005-2006",]
 ```
-
-
 
 Par ailleurs, on voit avec la fonction `summary` que le minimum de la colonne "Age" est 0. On retire le transfert correspondant :
 ```{r}
