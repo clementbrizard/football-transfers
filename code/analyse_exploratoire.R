@@ -1,4 +1,4 @@
-transfers <- read.csv("../data/top250-00-19.csv", header = T)
+transfers <- read.csv("data/original_transfers.csv", header = T)
 
 summary(transfers)
 

@@ -1,5 +1,5 @@
 ---
-title: "Analyse exploratoire"
+title: "Nettoyage du dataset"
 output: pdf_document
 ---
 
@@ -8,7 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r load data, echo = FALSE}
-transfers <- read.csv("../../data/top250-00-19.csv", header = T, na.strings = c("NA", "0"))
+transfers <- read.csv("../../data/original_transfers.csv", header = T, na.strings = c("NA", "0"))
 ```
 
 # Taille du dataset
@@ -38,8 +38,7 @@ ncol(transfers)
 colnames(transfers)
 ```
 
-# Nettoyage des données
-## Vérification des classes des prédicteurs
+# Vérification des classes des prédicteurs
 ```{r}
 sapply(transfers, class)
 ```
@@ -50,9 +49,8 @@ On convertit la variable "Season" en facteur ordonné :
 transfers$Season <- as.ordered(transfers$Season)
 ```
 
-
-## Vérification cohérence des données
-### Valeurs manquantes ou nulles
+# Vérification cohérence des données
+## Valeurs manquantes ou nulles
 ```{r}
 summary(transfers)
 ```
@@ -71,8 +69,8 @@ sum(cont[1:5]) / sum(cont)
 ```
 Les cinq premières saisons concentrent l'essentiel des valeurs manquantes.
 
-## Simplification du dataset
-### Ligues
+# Simplification du dataset
+## Ligues
 On s'intéresse aux ligues :
 ```{r}
 levels(transfers$League_from)
@@ -104,23 +102,29 @@ transfers$League_from <- factor(transfers$League_from)
 transfers$League_to <- factor(transfers$League_to)
 ```
 
-### Equipes et nom des joueurs
+## Equipes et nom des joueurs
 On vire les colonnes :
 ```{r}
 transfers <- subset(transfers, select = -c(Name, Team_from, Team_to))
 ```
 
-## Synthèse
-- Le dataset contient les 250 plus gros transferts des saisons 2000-2001 à 2018-2019 (à moins de 10 transferts près par saison)
-- nous disposions initialement de dix prédicteurs
+## Positions
+On regroupe en quatre catégories : gardiens, défenseurs, milieux, attaquants :
+```{r}
+levels(transfers$Position)
+levels(transfers$Position) <- gsub(".*Back$|Sweeper", "Defender", levels(transfers$Position))
+levels(transfers$Position) <- gsub(".*Forward$|Second Striker|.*Winger$", "Forward", levels(transfers$Position))
+levels(transfers$Position) <- gsub(".*Midfield$", "Midfielder", levels(transfers$Position))
+levels(transfers$Position)
+```
+
+# Synthèse
 - la variable "Saison" a été convertie en facteur ordonné
 - il manque la valeur "Market_value" pour 27 % des transferts et les cinq premières saisons concentrent plus de 90 % de ces valeurs manquantes
 - pour les ligues, 41 % des transferts du dataset, soit près de 2000, ont été effectués entre deux clubs des cinq plus grands championnats. Nous avons mis toutes les autres valeurs de ligue à `NA`, pour ne plus avoir que cinq modalités de ligues.
 - nous avons supprimé les colonnes "Name", "Team_from" et "Team_to"
+- les positions ont été regroupées en quatre catégories : gardiens, défenseurs, milieux, attaquants
 
-# Première étude des données
-```{r}
-length(levels(transfers$Team_from))
-length(levels(transfers$Team_to))
+```{r save data, echo = FALSE}
+write.csv(transfers, "../../data/clean_transfers.csv", row.names = FALSE)
 ```
-Les 4699 transferts se répartissent en 570 clubs vendeurs et 325 clubs acheteurs. Cette différence pourraiy s'expliquer par le fait que certains clubs vendent cher des joueurs dont ils ont fait augmenter la valeur après les avoir acheté à faible prix. Il y a une concentration des mêmes clubs acheteurs dans les transferts les plus élevés.
