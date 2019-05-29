@@ -38,14 +38,13 @@ ncol(transfers)
 colnames(transfers)
 ```
 
-
 # Nettoyage des données
 ## Vérification des classes des prédicteurs
 ```{r}
 sapply(transfers, class)
 ```
 
-On convertit la variable "Name" au type `character`, utilisé en R pour représenter les `string`. On pourrait dire que le nom est un facteur mais la variable prend tellement de valeurs que cela semble plus pertinent d'en faire un type `character`. On ne le fait pas pour les équipes et les ligues, qui prennent moins de valeurs différentes et peuvent a priori avoir une influence sur le prix des joueurs, contrairement à leur nom.
+On convertit la variable "Name" au type `character`, utilisé en R pour représenter les `string`. On pourrait dire que le nom est un facteur mais la variable prend tellement de valeurs que cela semble plus pertinent d'en faire un type `character`.
 ```{r}
 transfers$Name <- as.character(transfers$Name)
 class(transfers$Name)
@@ -63,7 +62,7 @@ transfers$Season <- as.ordered(transfers$Season)
 ```{r}
 summary(transfers)
 ```
-Seule la colonne "Market_value" contient des valeurs nulles, à raison de 1260 sur 4700 soit 27 %.
+Seule la colonne "Market_value" contient une grande quantité de `NA`, à raison de 1260 sur 4700 soit 27 %.
 ```{r}
 # extract rows where Market_value is na
 null_market_value <- transfers[is.na(transfers$Market_value) == T,]
@@ -78,27 +77,47 @@ sum(cont[1:5]) / sum(cont)
 ```
 Les cinq premières saisons concentrent l'essentiel des valeurs manquantes.
 
-
 ## Valeurs incohérentes
+### Ligues
 On s'intéresse aux ligues :
 ```{r}
 levels(transfers$League_from)
 ```
-Les 40 premières valeurs sont des valeurs de pays. Les autres valeurs sont bien des ligues. On regarde combien de transferts ont une valeur de pays et non de ligue dans une des deux colonnes de ligues :
+
+Exemple des vérifications faites sur les noms de ligue ambigüs : "Série A" correspond à la première division brésilienne et "Serie A" à l'italienne, "Bundesliga" à l'autrichienne et "1. Bundesliga" à l'allemande. On remarque aussi des valeurs de pays. Dans la plupart des cas, ces valeurs correspondent à des divisions inférieures des pays correspondants.
+
+Hypothèse : la plupart des transferts impliquent un des cinq grands championnats : anglais, espagnol, allemand, français et italien :
 ```{r}
-pays_League_from <- levels(transfers$League_from)[1:40]
-pays_League_to <- levels(transfers$League_to)[1:24]
-pays <- unique(c(pays_League_from, pays_League_to))
-nrow(subset(transfers, League_from %in% pays | League_to %in% pays))
-```
-444 transferts sur 4699 sont concernés, soit presque 10 %. Nous décidons néanmoins de nous en débarrasser :
-```{r}
-transfers <- subset(transfers, !(League_from %in% pays | League_to %in% pays))
-nrow(transfers)
+# we define a vector containing the five main leagues names
+leagues.main <- ( c("1.Bundesliga", "LaLiga", "Ligue 1", "Premier League", "Serie A"))
+
+# we extract transfers between clubs of the five main leagues
+transfers.main <- transfers[transfers$League_from %in% leagues.main & transfers$League_to %in% leagues.main,]
+
+# proportion
+nrow(transfers.main)
+nrow(transfers.main) / nrow(transfers)
 ```
 
-# Synthèse
-Nous avons changé le type de la conomme "Name", remaqrqué que 27 % des valeurs de la colonne "Market_value étaient manquantes, principalement sur les cinq premières saisons, supprimé l'unique transfert où l'âge du joueur était nul, et supprimé les 10 % de transferts donc la colonne "League_from" ou "League_to" avait pour valeur un pays.
+42 % des transferts impliquent uniquement des clubs des cinq grands championnats, ce qui représente tout de même près de 2000 transferts. Nous décidons de mettre toutes les auutres valeurs de ligue à `NA`. Ainsi, nous diminuons le nombre de modalités des ligues :
+```{r}
+# we set to NA all the leagues that are not in the five main leagues
+transfers$League_from[! transfers$League_from %in% leagues.main] <- NA 
+transfers$League_to[! transfers$League_to %in% leagues.main] <- NA 
+
+# we reset the levels of the leagues columns
+transfers$League_from <- factor(transfers$League_from)
+transfers$League_to <- factor(transfers$League_to)
+```
+
+
+## Synthèse
+- Le dataset contient les 250 plus gros transferts des saisons 2000-2001 à 2018-2019 (à moins de 10 transferts près par saison)
+- noous disposions initialement de dix prédicteurs 
+- la colonne "Name" a été convertie en `character` (`factor` initialement)
+- la variable "Saison" a été convertie en facteur ordonné
+- il manque la valeur "Market_value" pour 27 % des transferts et les cinq premières saisons concentrent plus de 90 % de ces valeurs manquantes
+- pour les ligues, 41 % des transferts du dataset, soit près de 2000, ont été effectués entre deux clubs des cinq plus grands championnats. Nous avons mis toutes les autres valeurs de ligue à `NA`, pour ne plus avoir que cinq modalités de ligues.
 
 # Première étude des données
 ```{r}
