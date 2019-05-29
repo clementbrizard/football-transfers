@@ -44,12 +44,6 @@ colnames(transfers)
 sapply(transfers, class)
 ```
 
-On convertit la variable "Name" au type `character`, utilisé en R pour représenter les `string`. On pourrait dire que le nom est un facteur mais la variable prend tellement de valeurs que cela semble plus pertinent d'en faire un type `character`.
-```{r}
-transfers$Name <- as.character(transfers$Name)
-class(transfers$Name)
-```
-
 On convertit la variable "Season" en facteur ordonné :
 ```{r}
 # we use the already alphabetical order of seasons
@@ -77,7 +71,7 @@ sum(cont[1:5]) / sum(cont)
 ```
 Les cinq premières saisons concentrent l'essentiel des valeurs manquantes.
 
-## Valeurs incohérentes
+## Simplification du dataset
 ### Ligues
 On s'intéresse aux ligues :
 ```{r}
@@ -110,14 +104,19 @@ transfers$League_from <- factor(transfers$League_from)
 transfers$League_to <- factor(transfers$League_to)
 ```
 
+### Equipes et nom des joueurs
+On vire les colonnes :
+```{r}
+transfers <- subset(transfers, select = -c(Name, Team_from, Team_to))
+```
 
 ## Synthèse
 - Le dataset contient les 250 plus gros transferts des saisons 2000-2001 à 2018-2019 (à moins de 10 transferts près par saison)
-- noous disposions initialement de dix prédicteurs 
-- la colonne "Name" a été convertie en `character` (`factor` initialement)
+- nous disposions initialement de dix prédicteurs
 - la variable "Saison" a été convertie en facteur ordonné
 - il manque la valeur "Market_value" pour 27 % des transferts et les cinq premières saisons concentrent plus de 90 % de ces valeurs manquantes
 - pour les ligues, 41 % des transferts du dataset, soit près de 2000, ont été effectués entre deux clubs des cinq plus grands championnats. Nous avons mis toutes les autres valeurs de ligue à `NA`, pour ne plus avoir que cinq modalités de ligues.
+- nous avons supprimé les colonnes "Name", "Team_from" et "Team_to"
 
 # Première étude des données
 ```{r}
