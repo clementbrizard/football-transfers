@@ -1,0 +1,130 @@
+---
+title: "Nettoyage du dataset"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load data, echo = FALSE}
+transfers <- read.csv("../../data/original_transfers.csv", header = T, na.strings = c("NA", "0"))
+```
+
+# Taille du dataset
+## Nombre de transferts enregistrés
+```{r}
+nrow(transfers)
+```
+
+Le dataset répertorie donc 4700 transferts. Il est sensé contenir les 250 transferts les plus élevés pour chaque saison des dix-neuf dernières saisons :
+```{r}
+length(unique(transfers$Season))
+```
+Or : 
+```{r}
+19 * 250
+```
+Nous ne disposons donc pas exactement de 250 transferts par saison :
+```{r}
+freq <- table(transfers$Season)
+sort(freq[freq != 250])
+```
+Il manque des transferts pour 15 saisons sur 19 mais ce n'est jamais plus de 8 transferts sur 250, ce qui ne devrait pas fausser les mesures de l'influence de la saison que l'on pourra faire par la suite.
+
+## Nombre de prédicteurs
+```{r}
+ncol(transfers)
+colnames(transfers)
+```
+
+# Vérification des classes des prédicteurs
+```{r}
+sapply(transfers, class)
+```
+
+On convertit la variable "Season" en facteur ordonné :
+```{r}
+# we use the already alphabetical order of seasons
+transfers$Season <- as.ordered(transfers$Season)
+```
+
+# Vérification cohérence des données
+## Valeurs manquantes ou nulles
+```{r}
+summary(transfers)
+```
+Seule la colonne "Market_value" contient une grande quantité de `NA`, à raison de 1260 sur 4700 soit 27 %.
+```{r}
+# extract rows where Market_value is na
+null_market_value <- transfers[is.na(transfers$Market_value) == T,]
+
+# make a contingency table by season
+cont <- table(null_market_value$Season)
+cont
+
+# proportion of the first five seasons
+sum(cont[1:5])
+sum(cont[1:5]) / sum(cont)
+```
+Les cinq premières saisons concentrent l'essentiel des valeurs manquantes.
+
+# Simplification du dataset
+## Ligues
+On s'intéresse aux ligues :
+```{r}
+levels(transfers$League_from)
+```
+
+Exemple des vérifications faites sur les noms de ligue ambigüs : "Série A" correspond à la première division brésilienne et "Serie A" à l'italienne, "Bundesliga" à l'autrichienne et "1. Bundesliga" à l'allemande. On remarque aussi des valeurs de pays. Dans la plupart des cas, ces valeurs correspondent à des divisions inférieures des pays correspondants.
+
+Hypothèse : la plupart des transferts impliquent un des cinq grands championnats : anglais, espagnol, allemand, français et italien :
+```{r}
+# we define a vector containing the five main leagues names
+leagues.main <- ( c("1.Bundesliga", "LaLiga", "Ligue 1", "Premier League", "Serie A"))
+
+# we extract transfers between clubs of the five main leagues
+transfers.main <- transfers[transfers$League_from %in% leagues.main & transfers$League_to %in% leagues.main,]
+
+# proportion
+nrow(transfers.main)
+nrow(transfers.main) / nrow(transfers)
+```
+
+42 % des transferts impliquent uniquement des clubs des cinq grands championnats, ce qui représente tout de même près de 2000 transferts. Nous décidons de mettre toutes les auutres valeurs de ligue à `NA`. Ainsi, nous diminuons le nombre de modalités des ligues :
+```{r}
+# we set to NA all the leagues that are not in the five main leagues
+transfers$League_from[! transfers$League_from %in% leagues.main] <- NA 
+transfers$League_to[! transfers$League_to %in% leagues.main] <- NA 
+
+# we reset the levels of the leagues columns
+transfers$League_from <- factor(transfers$League_from)
+transfers$League_to <- factor(transfers$League_to)
+```
+
+## Equipes et nom des joueurs
+On vire les colonnes :
+```{r}
+transfers <- subset(transfers, select = -c(Name, Team_from, Team_to))
+```
+
+## Positions
+On regroupe en quatre catégories : gardiens, défenseurs, milieux, attaquants :
+```{r}
+levels(transfers$Position)
+levels(transfers$Position) <- gsub(".*Back$|Sweeper", "Defender", levels(transfers$Position))
+levels(transfers$Position) <- gsub(".*Forward$|Second Striker|.*Winger$", "Forward", levels(transfers$Position))
+levels(transfers$Position) <- gsub(".*Midfield$", "Midfielder", levels(transfers$Position))
+levels(transfers$Position)
+```
+
+# Synthèse
+- la variable "Saison" a été convertie en facteur ordonné
+- il manque la valeur "Market_value" pour 27 % des transferts et les cinq premières saisons concentrent plus de 90 % de ces valeurs manquantes
+- pour les ligues, 41 % des transferts du dataset, soit près de 2000, ont été effectués entre deux clubs des cinq plus grands championnats. Nous avons mis toutes les autres valeurs de ligue à `NA`, pour ne plus avoir que cinq modalités de ligues.
+- nous avons supprimé les colonnes "Name", "Team_from" et "Team_to"
+- les positions ont été regroupées en quatre catégories : gardiens, défenseurs, milieux, attaquants
+
+```{r save data, echo = FALSE}
+write.csv(transfers, "../../data/clean_transfers.csv", row.names = FALSE)
+```
