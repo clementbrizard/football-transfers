@@ -91,7 +91,7 @@ nrow(transfers.main)
 nrow(transfers.main) / nrow(transfers)
 ```
 
-42 % des transferts impliquent uniquement des clubs des cinq grands championnats, ce qui représente tout de même près de 2000 transferts. Nous décidons de mettre toutes les auutres valeurs de ligue à `NA`. Ainsi, nous diminuons le nombre de modalités des ligues :
+42 % des transferts impliquent uniquement des clubs des cinq grands championnats, ce qui représente tout de même près de 2000 transferts. Nous décidons de mettre toutes les autres valeurs de ligue à `NA`. Ainsi, nous diminuons le nombre de modalités des ligues :
 ```{r}
 # we set to NA all the leagues that are not in the five main leagues
 transfers$League_from[! transfers$League_from %in% leagues.main] <- NA 
@@ -102,8 +102,8 @@ transfers$League_from <- factor(transfers$League_from)
 transfers$League_to <- factor(transfers$League_to)
 ```
 
-## Equipes et nom des joueurs
-On vire les colonnes :
+## Equipes et noms des joueurs
+On vire les colonnes noms et les équipes car elles proposent plusieurs beaucoup qu'à notre avis n'influence pas beaucoup notre analyse :
 ```{r}
 transfers <- subset(transfers, select = -c(Name, Team_from, Team_to))
 ```
@@ -113,7 +113,8 @@ On regroupe en quatre catégories : gardiens, défenseurs, milieux, attaquants :
 ```{r}
 levels(transfers$Position)
 levels(transfers$Position) <- gsub(".*Back$|Sweeper", "Defender", levels(transfers$Position))
-levels(transfers$Position) <- gsub(".*Forward$|Second Striker|.*Winger$", "Forward", levels(transfers$Position))
+levels(transfers$Position) <- gsub(".*Forward$|Second Striker|.*Winger$", "Forward",
+                                   levels(transfers$Position))
 levels(transfers$Position) <- gsub(".*Midfield$", "Midfielder", levels(transfers$Position))
 levels(transfers$Position)
 ```

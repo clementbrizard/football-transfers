@@ -1,0 +1,44 @@
+---
+title: "Analyse_factorielle"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load data, echo = FALSE}
+transfers <- read.csv("../../data/original_transfers.csv", header = T, na.strings = c("NA", "0"))
+```
+## AFM
+
+Dans notre cas, nous avons un m??lange de variables qualitatives et quantitatives donc une ACP ne peut pas s'appliquer. De ce fait, nous appliquons AFM (Analyse Factorielle Multiple) qui est d??di??e aux tableaux de donn??es o?? les variables sont structur??es en groupes. Plusieurs jeux de variables (continues ou qualitatives) sont ainsi ??tudi??es simultan??ment
+
+```{r}
+library(FactoMineR)
+mfa <- MFA(transfers, group = rep(1,7), type = c("n","c",rep("n",3),"c","c"), ncp=5,
+           name.group=colnames(transfers), graph=FALSE)
+summary(mfa)
+```
+Le summary nous permettra d'avoir un r??sum?? des principaux r??sultats num??riques. En effet, le premier tableau de ce r??sum?? (Eigenvalues) comprend les valeurs propres et les valeurs d'inertie associ??es ?? chaque dimension, dans notre cas la premi??re dimension r??cup??re que 6% de l'information/intertie.
+Les tableaux qui suivent permettent de voir la qualit?? de la repr??sentation et la contribution ?? la construction de chaque variable (regroup??es et tri??es par leur nature) et chaque individu ?? chaque dimension.
+\n
+#Avoir les 5 individus qui ont le plus contribu??s ?? la construction des axes
+```{r}
+plot(mfa, invisible = "quali", select = "contrib 5")
+```
+
+# Autre plot
+on remarque une corr??lation entre les 2 vars Makrket_value et Transfer_fee ce qui a pu ??tre pr??dictible
+```{r}
+plot(mfa, choix="var")
+```
+
+# DimDesc function
+```{r}
+dimdesc(mfa)
+```
+cette fonction nous donne une description automatique des dimensions factorielles. On aura dim1 qui est d??crite par les vars quantitatives les + corr??l??es positivement et n??gativement. Puis par les vars quali les plus li??es
+
