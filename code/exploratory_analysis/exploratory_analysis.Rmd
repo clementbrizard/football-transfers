@@ -118,4 +118,4 @@ barplot(summary(transfers$Position), names.arg = c("Def", "For", "Go", "Mid"))
 - âge : suit une loi normale
 - League_from : pas uniformément répartie, valeurs aberrantes élevées. Certaines ligues mettent sur le marché des prix très élevés, notamment l'Espagne
 - League_to : idem que League_from, mais valeurs plus élevées. L'Espagne et l'Allemagne sont les ligues qui achètent aux prix les plus élevés
-- League_from et League_to : corrélées positivement
+- Market_value et Transfer_fee : corrélées positivement
