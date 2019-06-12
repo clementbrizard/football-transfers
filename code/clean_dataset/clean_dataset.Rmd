@@ -130,12 +130,46 @@ levels(transfers$Position)
 ```
 
 # Création de variables composites
-
+## Plus-value
 ```{r}
 plus_value <- transfers$Transfer_fee - transfers$Market_value
 transfers <- cbind(transfers,plus_value)
-transfers <- subset(transfers, select = -c(Transfer_fee))
+# transfers <- subset(transfers, select = -c(Transfer_fee))
 ```
+
+## Regroupement des clubs
+```{r}
+Transfer_fee_by_Team_to <- aggregate(transfers$Transfer_fee ~ transfers$Team_to, transfers, sum)
+names(Transfer_fee_by_Team_to) <- c("Team_to","Total_Transfer_fee")
+Transfer_fee_by_Team_to <- Transfer_fee_by_Team_to[order(Transfer_fee_by_Team_to$Total_Transfer_fee, decreasing = T),]
+
+# méthode du coude pour le nombre de classes optimal
+inerties_min = c(1:10)
+for (k in 1:10) {
+  inerties <- c()
+  inerties_min[k] <- kmeans(x = Transfer_fee_by_Team_to$Total_Transfer_fee, centers = k, nstart = 100)$tot.withinss
+}
+
+plot(inerties_min, xlab = "Nombre de classes", ylab = "Inertie intra-classe", type = "b")
+
+# on choisit 4
+kmeans <- kmeans(Transfer_fee_by_Team_to$Total_Transfer_fee, 4)
+plot(Transfer_fee_by_Team_to$Total_Transfer_fee, col = kmeans$cluster)
+
+Transfer_fee_by_Team_to <- cbind(Transfer_fee_by_Team_to, kmeans$cluster)
+names(Transfer_fee_by_Team_to)[3] <- "Cluster"
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 4] <- "Niveau 1"
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 2] <- "Niveau 2"
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 1] <- "Niveau 3"
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 3] <- "Niveau 4"
+
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 1"] <- 1
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 2"] <- 2
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 3"] <- 3
+Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 4"] <- 4 
+
+```
+
 
 # Synthèse
 - la variable "Saison" a été convertie en facteur ordonné
