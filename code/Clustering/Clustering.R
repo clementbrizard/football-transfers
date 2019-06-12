@@ -33,7 +33,6 @@ class(gower.dist)
   # quelle approche nous allons utilis??, nous avons d??cid?? de tracer les 2 et puis de voir
   # laquelle est la plus ??quilibr??e.
 
-
 ## 1 - DIVISIVE [HAUT VERS LE BAS]
 
 divisive.clust <- diana(as.matrix(gower.dist), diss = TRUE, keep.diss = TRUE)
@@ -41,8 +40,7 @@ plot(divisive.clust, main = "Divisive")
 
 ## 2 - Agglomerative (bas vers le haut)
 aggl.clust.c <- hclust(gower.dist, method = "complete")
-plot(aggl.clust.c,
-     main = "Agglomerative, complete linkages")
+plot(aggl.clust.c,main = "Agglomerative, complete linkages")
 
   # Après un moment d'hésitation devant les plot des deux approches, nous avons décidé d'appliquer l'algorithme
   # du clustering avec le résultat des deux et trancher sur lequel est le meilleur plus tard dans l'analyse.
@@ -154,14 +152,14 @@ library("dendextend")
 
 dendro <- as.dendrogram(divisive.clust)
 dendro.col <- dendro %>%
-  set("branches_k_color", k = 4, value =   c("darkslategray", "darkslategray4", "darkslategray3", "gold3")) %>%
+  set("branches_k_color", k = 5, value =   c("darkslategray", "darkslategray4", "darkslategray3", "gold3","darkcyan")) %>%
   set("branches_lwd", 0.6) %>%
   set("labels_colors", value = c("darkslategray")) %>% 
   set("labels_cex", 0.5)
 
 ggd1 <- as.ggdend(dendro.col)
 ggplot(ggd1, theme = theme_minimal()) +
-  labs(x = "Num. observations", y = "Height", title = "Dendrogram, k = 4")
+  labs(x = "Num. observations", y = "Height", title = "Dendrogram, k = 5")
 
 
 
