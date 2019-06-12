@@ -118,22 +118,23 @@ nrow(transfers.main) / nrow(transfers)
 <!-- transfers <- subset(transfers, select = -c(Name, Team_from, Team_to)) -->
 <!-- ``` -->
 
-<!-- ## Positions -->
-<!-- On regroupe en quatre catégories : gardiens, défenseurs, milieux, attaquants : -->
-<!-- ```{r} -->
-<!-- levels(transfers$Position) -->
-<!-- levels(transfers$Position) <- gsub(".*Back$|Sweeper", "Defender", levels(transfers$Position)) -->
-<!-- levels(transfers$Position) <- gsub(".*Forward$|Second Striker|.*Winger$", "Forward", -->
-<!--                                    levels(transfers$Position)) -->
-<!-- levels(transfers$Position) <- gsub(".*Midfield$", "Midfielder", levels(transfers$Position)) -->
-<!-- levels(transfers$Position) -->
-<!-- ``` -->
+## Positions
+On regroupe en quatre catégories : gardiens, défenseurs, milieux, attaquants :
+```{r}
+levels(transfers$Position)
+levels(transfers$Position) <- gsub(".*Back$|Sweeper", "Defender", levels(transfers$Position))
+levels(transfers$Position) <- gsub(".*Forward$|Second Striker|.*Winger$", "Forward",
+                                   levels(transfers$Position))
+levels(transfers$Position) <- gsub(".*Midfield$", "Midfielder", levels(transfers$Position))
+levels(transfers$Position)
+```
 
 # Création de variables composites
 
 ```{r}
 plus_value <- transfers$Transfer_fee - transfers$Market_value
 transfers <- cbind(transfers,plus_value)
+transfers <- subset(transfers, select = -c(Transfer_fee))
 ```
 
 # Synthèse
