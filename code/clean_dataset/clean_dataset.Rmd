@@ -134,7 +134,6 @@ levels(transfers$Position)
 ```{r}
 plus_value <- transfers$Transfer_fee - transfers$Market_value
 transfers <- cbind(transfers,plus_value)
-# transfers <- subset(transfers, select = -c(Transfer_fee))
 ```
 
 ## Regroupement des clubs
@@ -157,17 +156,21 @@ kmeans <- kmeans(Transfer_fee_by_Team_to$Total_Transfer_fee, 4)
 plot(Transfer_fee_by_Team_to$Total_Transfer_fee, col = kmeans$cluster)
 
 Transfer_fee_by_Team_to <- cbind(Transfer_fee_by_Team_to, kmeans$cluster)
-names(Transfer_fee_by_Team_to)[3] <- "Cluster"
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 4] <- "Niveau 1"
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 2] <- "Niveau 2"
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 1] <- "Niveau 3"
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == 3] <- "Niveau 4"
+names(Transfer_fee_by_Team_to)[3] <- "Team_to_type"
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == 4] <- "Niveau 1"
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == 2] <- "Niveau 2"
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == 1] <- "Niveau 3"
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == 3] <- "Niveau 4"
 
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 1"] <- 1
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 2"] <- 2
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 3"] <- 3
-Transfer_fee_by_Team_to$Cluster[Transfer_fee_by_Team_to$Cluster == "Niveau 4"] <- 4 
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == "Niveau 1"] <- 1
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == "Niveau 2"] <- 2
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == "Niveau 3"] <- 3
+Transfer_fee_by_Team_to$Team_to_type[Transfer_fee_by_Team_to$Team_to_type == "Niveau 4"] <- 4 
 
+# on met les étiquettes dans le tableau transfers
+Transfer_fee_by_Team_to <- subset(Transfer_fee_by_Team_to, select = -c(Total_Transfer_fee))
+transfers <- merge(x = transfers, y = Transfer_fee_by_Team_to, all.x = T)
+transfers <- transfers[c("Position", "Age", "Team_from", "League_from", "Team_to", "Team_to_type", "League_to", "Season", "Market_value", "Transfer_fee", "plus_value")]
 ```
 
 
