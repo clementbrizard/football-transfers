@@ -72,7 +72,7 @@ for(i in (1:10)){
   CV.nv[i]<-CV.nv[i]/K
 }
 CV.nv <- mean(CV.nv)
-CV.nv ## 0.2844846
+CV.nv ## 0.2901112
 
     ## autre méthode pour la cross validation Et ca fonctionne
 CVgroup <- function(k,datasize,seed){
@@ -106,7 +106,7 @@ NB <- function(n,data,cvlist){
   return(mean(lerr))
 }
 resNB = NB(10,LRdata,cvlist)
-resNB # avec original teams : 0.3008721, without original teams : 0.2863372
+resNB # error 0.2872093
 
 
 # 1 - RandomForest
@@ -125,3 +125,4 @@ for(i in (1:10)){
   CV.for[i]<-CV.for[i]/K
 }
 CV.for <- mean(CV.for)
+CV.for # 0.01742125

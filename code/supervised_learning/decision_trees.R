@@ -79,22 +79,56 @@ taux_erreur = length(erreur)/length(ztest)
 
 
 
-## Nouvelle version
 
-# Algo C5.0 ## non fonctionnel pour l'instant 
+## Nouvelle version
+# Algo j48 ## non fonctionnel pour l'instant 
+p <- ncol(LRdata)
+K<-10
+folds=sample(1:K,n,replace=TRUE)
+CV.j48<-rep(0,10)
+for(i in (1:10)){
+  for(j in (1:K)) {
+    j48 <- J48(class~., data=LRdata[folds!=j,], control = Weka_control(C = 0.28))
+    test <- LRdata[folds==j,]
+    yhat.bag<-predict(c50,newdata=test)
+    perf.bag <-table(test$class,yhat.bag)
+    CV.j48[i] <- CV.j48[i] + (1-sum(diag(perf.bag))/nrow(test))
+  }
+  #CV.c50[i]<-CV.c50[i]/K
+}
+CV.j48 <- mean(CV.j48)
+CV.j48
+
+# Algo C4.5 ## non fonctionnel pour l'instant 
+    ## sans cv 
+train <- LRdata[1:2294,-c(10)]
+ytain <- LRdata[1:2294,c(10)]
+test <- LRdata[2294:3440,-c(10)]
+ytest <- LRdata[2294:3440,-c(10)]
+
+fit <- C5.0(x = train, y = ytain,trials = 10, control = C5.0Control(CF = 0.32))
+predictions <- predict(fit, test)
+perf.bag <- table(predictions, ytest)
+(1-sum(diag(perf.bag))/nrow(test)) # erreur sans cv : 0.6931125
+
+
+    ## avec cv
 p <- ncol(LRdata)
 K<-10
 folds=sample(1:K,n,replace=TRUE)
 CV.c50<-rep(0,10)
 for(i in (1:10)){
   for(j in (1:K)) {
-    data <- LRdata[folds!=j,]
-    c50 <- C5.0(x = data[,-c(p)], y = data$class,trials = 10, control = C5.0Control(CF = 0.32),rules=TRUE)
-    test <- LRdata[folds==j,-c(p)]
+    train <- LRdata[folds!=j,]
+    c50 <- C5.0(x = train, y = train$class,trials = 10, control = C5.0Control(CF = 0.32),rules=TRUE)
+    test <- LRdata[folds==j,]
     yhat.bag<-predict(c50,newdata=test)
     perf.bag <-table(test$class,yhat.bag)
-    CV.for[i] <- CV.for[i] + (1-sum(diag(perf.bag))/nrow(test))
+    print(nrow(test))
+    print(1 - sum(diag(perf.bag)))
+    CV.for[i] <- CV.for[i] + ((1-sum(diag(perf.bag)))/nrow(test))
   }
   CV.c50[i]<-CV.c50[i]/K
 }
 CV.c50 <- mean(CV.c50)
+CV.c50

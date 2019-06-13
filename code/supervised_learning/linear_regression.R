@@ -29,15 +29,41 @@ BIC(linearMod)
   # sur le critère AIC (minimiser la fonction de vraisemblance) pour avoir les variables significatives
   # et donc pour éviter le overfitting.
 
-regData <- transfers[,c(2,10,11,12)]
+regData <- dataset[,c(2,8,9,10)]
 
-app <- scale(regData[1:2294,-1])
-y <- regData[1:2294, 1]
+app <- scale(regData[1:2294,-4])
+y <- regData[1:2294, 4]
 app <- as.data.frame(cbind(app, y))
 
-tst <- as.data.frame(scale(regData[2295:3440,-1]))
-y.tst <- regData[2295:3440, 1]
+tst <- as.data.frame(scale(regData[2295:3440,-4]))
+y.tst <- regData[2295:3440, 4]
 
 lm.model <- step(lm(y~., data = app), direction="backward")
 ypred <- predict(lm.model, newdata = tst)
-mean((y.tst-ypred)^2) # l'erreur = 8.307076 , qui est vraiment pas mal !
+mean((y.tst-ypred)^2) # l'erreur = 1.285385e+13 , super petit c'est bizarre car c'est TROP BIEN comme erreur
+
+
+  ## avec cv : 
+
+norm <- as.data.frame(apply(regData[,-c(4)], 2, scale))
+class <- regData$plus_value
+regData <- as.data.frame(cbind(norm, class = class))
+
+
+p <- ncol(regData)
+n <- nrow(regData)
+K<-10
+folds=sample(1:K,n,replace=TRUE)
+cv.lm<-rep(0,10)
+for(i in (1:10)){
+  for(j in (1:K)){
+    lm.model <- step(lm(class~., data = regData[folds!=j,]), direction="backward")
+    test <- regData[folds==j,]
+    
+    ypred <- predict(lm.model, newdata = test)
+    cv.lm[i] <- cv.lm[i] + mean((test[,c(p)]-ypred)^2)
+  }
+  cv.lm[i]<-cv.lm[i]/K
+}
+cv.lm <- mean(cv.lm)  
+cv.lm # avec step : 1.474589e-15 --> très petit, sans step : 1.809001e-15 pas si grand que ça

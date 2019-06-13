@@ -17,8 +17,8 @@ install.packages("FactoMineR")
 library(FactoMineR)
 
 
-dataset <- transfers[,-c(3,6)]
-
+dataset <- transfers[,-c(3,5,7,9)]
+dataset$plus_value[is.na(dataset$plus_value)] <- 0
 str(dataset)
 res.famd <- FAMD(dataset, graph = FALSE)
 fviz_screeplot(res.famd)
