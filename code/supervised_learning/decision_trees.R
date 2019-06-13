@@ -76,3 +76,25 @@ predictions <- predict(fit, Xtest)
 table(predictions, ztest)
 erreur = ztest[ztest != predictions]
 taux_erreur = length(erreur)/length(ztest)
+
+
+
+## Nouvelle version
+
+# Algo C5.0 ## non fonctionnel pour l'instant 
+p <- ncol(LRdata)
+K<-10
+folds=sample(1:K,n,replace=TRUE)
+CV.c50<-rep(0,10)
+for(i in (1:10)){
+  for(j in (1:K)) {
+    data <- LRdata[folds!=j,]
+    c50 <- C5.0(x = data[,-c(p)], y = data$class,trials = 10, control = C5.0Control(CF = 0.32),rules=TRUE)
+    test <- LRdata[folds==j,-c(p)]
+    yhat.bag<-predict(c50,newdata=test)
+    perf.bag <-table(test$class,yhat.bag)
+    CV.for[i] <- CV.for[i] + (1-sum(diag(perf.bag))/nrow(test))
+  }
+  CV.c50[i]<-CV.c50[i]/K
+}
+CV.c50 <- mean(CV.c50)

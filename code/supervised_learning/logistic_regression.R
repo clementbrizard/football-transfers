@@ -45,6 +45,8 @@ class <- transfers[,c(12)]
 class[class<=0] <- 0
 class[class>0] <- 1
 
+class <- as.factor(class)
+
   ## on normalise les vars quant
 norm = as.data.frame(apply(quantdata, 2, scale))
   ## on remet tout comme avant mais avec les vars quant scaled et class = pvalue binaire
@@ -69,4 +71,4 @@ for(i in (1:10)){
   CV.lr[i]<-CV.lr[i]/K
 }
 CV.lr <- mean(CV.lr)  
-CV.lr ## error avec les original teams = 0.09728916, sans original : 0.01830521
+CV.lr ## error avec les original teams = 0.09728916, sans original : 0.0185379
