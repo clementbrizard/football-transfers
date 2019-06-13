@@ -15,6 +15,51 @@ transfers <- read.csv("data/clean_transfers.csv", header = T)
 
 install.packages("FactoMineR")
 library(FactoMineR)
+
+
+dataset <- transfers[,-c(3,6)]
+
+str(dataset)
+res.famd <- FAMD(dataset, graph = FALSE)
+fviz_screeplot(res.famd)
+
+var <- get_famd_var (res.famd)
+var
+# Graphique des variables
+fviz_famd_var (res.famd, repel = TRUE)
+# Contribution ?? la premi??re dimension
+fviz_contrib (res.famd, "var", axes = 1)
+# Contribution ?? la deuxi??me dimension
+fviz_contrib (res.famd, "var", axes = 5)
+
+ind <- get_famd_ind(res.famd)
+plot(ind$contrib)
+
+
+## Notes
+# Nous aurions pu faire une analyse factorielle pour les vars quant avec ACP s??par??e de l analyse
+# Factorielle des vars quali avec une 
+
+### Biblio
+# 1 - http://www.numdam.org/article/RSA_2002__50_4_5_0.pdf
+
+
+res.hcpc <- HCPC(res.famd, graph = FALSE)
+fviz_dend(res.hcpc, 
+          cex = 0.7,                     # Taille du text
+          palette = "jco",               # Palette de couleur ?ggpubr::ggpar
+          rect = TRUE, rect_fill = TRUE, # Rectangle autour des groupes
+          rect_border = "jco",           # Couleur du rectangle
+          labels_track_height = 0.8      # Augment l'espace pour le texte
+)
+
+plot(res.hcpc, choice = "3D.map")
+
+
+sapply(transfers, function(x) length(unique(x)))
+
+
+### old version 
 Age <- transfers$Age
 LeagueFrom <- transfers$League_from
 transfers <- transfers[,-c(2,4)]
@@ -43,10 +88,10 @@ dimdesc(mfa)
 install.packages("factoextra")
 library("factoextra")
 
-  ## The proportion of variances retained by the different dimensions (axes)
+## The proportion of variances retained by the different dimensions (axes)
 fviz_screeplot(mfa)
 
-  ## extract the results for groups of variables
+## extract the results for groups of variables
 group <- get_mfa_var(mfa, "group")
 # Coordinates of groups
 head(group$coord)
@@ -65,7 +110,7 @@ fviz_contrib(mfa, "group", axes = 2)
 
 
 
-  ## Study quantitive vars
+## Study quantitive vars
 quanti.var <- get_mfa_var(mfa, "quanti.var")
 quanti.var
 # Coordinates
@@ -82,7 +127,7 @@ fviz_contrib(mfa, choice = "quanti.var", axes = 1, top = 20,
              palette = "jco")
 
 
-    ## quali
+## quali
 quali.var <- get_mfa_var(mfa, "quali.var")
 quali.var
 # Coordinates
@@ -106,50 +151,12 @@ fviz_contrib(mfa, choice = "quali.var", axes = 1, top = 20,
 ###http://www.sthda.com/french/articles/38-methodes-des-composantes-principales-dans-r-guide-pratique/76-afdm-analyse-factorielle-des-donnees-mixtes-avec-r-l-essentiel/
 
 dataset <- dataset[,-10]
-  ## Notre dataset est expliqu?? par 3 vars quanti et 6 vars quali
+## Notre dataset est expliqu?? par 3 vars quanti et 6 vars quali
 
-  ## alpha = 0.05
+## alpha = 0.05
 cor.test(dataset$Age,dataset$Transfer_fee,method="pearson") #p-value = 0.2267 < 0.05 donc  significantly correlated
 cor.test(dataset$Age,dataset$Market_value,method="pearson")
 cor.test(dataset$Market_value,dataset$Transfer_fee,method="pearson")
 
-  ## all the vars are corr
+## all the vars are corr
 ## on applique l'ACM sur 
-
-
-
-str(dataset)
-res.famd <- FAMD(transfers, graph = FALSE)
-fviz_screeplot(res.famd)
-
-var <- get_famd_var (res.famd)
-var
-# Graphique des variables
-fviz_famd_var (res.famd, repel = TRUE)
-# Contribution ?? la premi??re dimension
-fviz_contrib (res.famd, "var", axes = 1)
-# Contribution ?? la deuxi??me dimension
-fviz_contrib (res.famd, "var", axes = 2)
-
-ind <- get_famd_ind(res.famd)
-plot(ind$contrib)
-
-
-## Notes
-# Nous aurions pu faire une analyse factorielle pour les vars quant avec ACP s??par??e de l analyse
-# Factorielle des vars quali avec une 
-
-### Biblio
-# 1 - http://www.numdam.org/article/RSA_2002__50_4_5_0.pdf
-
-
-res.hcpc <- HCPC(res.famd, graph = FALSE)
-fviz_dend(res.hcpc, 
-          cex = 0.7,                     # Taille du text
-          palette = "jco",               # Palette de couleur ?ggpubr::ggpar
-          rect = TRUE, rect_fill = TRUE, # Rectangle autour des groupes
-          rect_border = "jco",           # Couleur du rectangle
-          labels_track_height = 0.8      # Augment l'espace pour le texte
-)
-
-plot(res.hcpc, choice = "3D.map")
