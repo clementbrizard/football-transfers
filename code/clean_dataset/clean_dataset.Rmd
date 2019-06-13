@@ -301,6 +301,7 @@ names(acheteurs)[1] <- "League"
 type <- rbind(vendeurs_acheteurs, vendeurs, acheteurs)
 
 transfers <- read.csv("../../data/clean_transfers.csv", header = T, na.strings = c("NA", "0"))
+transfers$plus_value[is.na(transfers$plus_value) == T] <- 0
 
 names(type)[2] <- "Type_League_from"
 transfers <- merge(x = transfers, y = type, by.x = "League_from", by.y = "League", all.x = T)
