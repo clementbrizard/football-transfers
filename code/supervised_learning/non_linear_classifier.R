@@ -72,7 +72,7 @@ for(i in (1:10)){
   CV.nv[i]<-CV.nv[i]/K
 }
 CV.nv <- mean(CV.nv)
-CV.nv
+CV.nv ## 0.2844846
 
     ## autre méthode pour la cross validation Et ca fonctionne
 CVgroup <- function(k,datasize,seed){
