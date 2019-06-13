@@ -1,4 +1,5 @@
 1) Présentation rapide des données présentes
+Expliquer pk y a des données manquantes --> on peut juste émettre des hypothèse
 2) Mise en forme
     - Gestion des données inconnues (NA)
     - Variables qualitatives
