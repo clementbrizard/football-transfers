@@ -130,12 +130,103 @@ levels(transfers$Position)
 ```
 
 # Création de variables composites
-
+## Plus-value
 ```{r}
 plus_value <- transfers$Transfer_fee - transfers$Market_value
 transfers <- cbind(transfers,plus_value)
-transfers <- subset(transfers, select = -c(Transfer_fee))
 ```
+
+## Regroupement des clubs
+```{r}
+# Achats
+Transfer_fee_by_Team_to <- aggregate(transfers$Transfer_fee ~ transfers$Team_to, transfers, sum)
+names(Transfer_fee_by_Team_to) <- c("Team_to","Achats")
+
+# Ventes
+Transfer_fee_by_Team_from <- aggregate(transfers$Transfer_fee ~ transfers$Team_from, transfers, sum)
+names(Transfer_fee_by_Team_from) <- c("Team_from","Ventes")
+
+# Diff
+merged <- merge(x = Transfer_fee_by_Team_from, y = Transfer_fee_by_Team_to, all = T, by.x = "Team_from", by.y = "Team_to")
+vendeurs <- subset(merged, is.na(merged$Achats))
+acheteurs <- subset(merged, is.na(merged$Ventes))
+vendeurs_acheteurs <- merged[complete.cases(merged),]
+
+# clustering des vendeurs_acheteurs
+vendeurs_acheteurs$Profits <- vendeurs_acheteurs$Ventes - vendeurs_acheteurs$Achats
+vendeurs_acheteurs <- vendeurs_acheteurs[order(vendeurs_acheteurs$Profits, decreasing = T),]
+inerties_min = c(1:10)
+for (k in 1:10) {
+  inerties <- c()
+  inerties_min[k] <- kmeans(x = vendeurs_acheteurs$Profits, centers = k, nstart = 100)$tot.withinss
+}
+
+plot(inerties_min, xlab = "Nombre de classes", ylab = "Inertie intra-classe", type = "b")
+
+kmeans <- kmeans(vendeurs_acheteurs$Profits, 4)
+plot(vendeurs_acheteurs$Profits, col = kmeans$cluster)
+
+kmeans
+
+vendeurs_acheteurs <- cbind(vendeurs_acheteurs, kmeans$cluster)
+names(vendeurs_acheteurs)[5] <- "Type"
+vendeurs_acheteurs$Team_type[vendeurs_acheteurs$Team_type == 4] <- "Profits_1"
+vendeurs_acheteurs$Team_type[vendeurs_acheteurs$Team_type == 2] <- "Profits_2"
+vendeurs_acheteurs$Team_type[vendeurs_acheteurs$Team_type == 3] <- "Profits_3"
+vendeurs_acheteurs$Team_type[vendeurs_acheteurs$Team_type == 1] <- "Profits_4"
+
+# clustering des clubs uniquement vendeurs
+vendeurs <- vendeurs[order(vendeurs$Ventes, decreasing = T),]
+inerties_min = c(1:10)
+for (k in 1:10) {
+  inerties <- c()
+  inerties_min[k] <- kmeans(x = vendeurs$Ventes, centers = k, nstart = 100)$tot.withinss
+}
+
+plot(inerties_min, xlab = "Nombre de classes", ylab = "Inertie intra-classe", type = "b")
+
+kmeans <- kmeans(vendeurs$Ventes, 3)
+plot(vendeurs$Ventes, col = kmeans$cluster)
+
+kmeans
+
+vendeurs <- cbind(vendeurs, kmeans$cluster)
+names(vendeurs)[4] <- "Type"
+vendeurs$Team_type[vendeurs$Team_type == 2] <- "Vendeurs_1"
+vendeurs$Team_type[vendeurs$Team_type == 1] <- "Vendeurs_2"
+vendeurs$Team_type[vendeurs$Team_type == 3] <- "Vendeurs_3"
+
+# clustering des clubs uniquement acheteurs
+acheteurs <- acheteurs[order(acheteurs$Achats, decreasing = T),]
+inerties_min = c(1:10)
+for (k in 1:10) {
+  inerties <- c()
+  inerties_min[k] <- kmeans(x = acheteurs$Achats, centers = k, nstart = 100)$tot.withinss
+}
+
+plot(inerties_min, xlab = "Nombre de classes", ylab = "Inertie intra-classe", type = "b")
+
+kmeans <- kmeans(acheteurs$Achats, 2)
+plot(acheteurs$Achats, col = kmeans$cluster)
+
+kmeans
+
+acheteurs <- cbind(acheteurs, kmeans$cluster)
+names(acheteurs)[4] <- "Type"
+acheteurs$Team_type[acheteurs$Team_type == 2] <- "Acheteurs_1"
+acheteurs$Team_type[acheteurs$Team_type == 1] <- "Acheteurs_2"
+
+# étiquettes
+type <- rbind(vendeurs_acheteurs, vendeurs, acheteurs)
+names(type)[2] <- "Type_Team_from"
+transfers <- merge(x = transfers, y = type, by.x = "Team_from", by.y = "Team", all.x = T)
+
+names(type)[2] <- "Type_Team_to"
+transfers <- merge(x = transfers, y = type, by.x = "Team_to", by.y = "Team", all.x = T)
+
+transfers <- transfers[c("Position", "Age", "Team_from", "Type_Team_from", "League_from", "Team_to", "Type_Team_to", "League_to", "Season", "Market_value", "Transfer_fee", "plus_value")]
+```
+
 
 # Synthèse
 - la variable "Saison" a été convertie en facteur ordonné
