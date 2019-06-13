@@ -49,7 +49,7 @@ class[class>0] <- 1
 norm = as.data.frame(apply(quantdata, 2, scale))
   ## on remet tout comme avant mais avec les vars quant scaled et class = pvalue binaire
 LRdata <- as.data.frame(cbind(cbind(norm,transfers[,-c(2,10,11,12)]), class=class))
-
+LRdata <- LRdata[,-c(5,8)]
   ## 10 cross validation for LR
 ##on teste avec une validation croisée par 10, k = 10, pour obtenir une estimation plus précise 
 # de la performance en prévision du modèle
@@ -69,4 +69,4 @@ for(i in (1:10)){
   CV.lr[i]<-CV.lr[i]/K
 }
 CV.lr <- mean(CV.lr)  
-CV.lr ## error = 0.09728916
+CV.lr ## error avec les original teams = 0.09728916, sans original : 0.01830521
