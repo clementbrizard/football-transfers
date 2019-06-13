@@ -5,6 +5,7 @@ library(Hmisc)
 
 # Récupération des données
 transfers <- read.csv("data/clean_transfers.csv")
+transfers <- subset(transfers, select = -c(Team_from,Team_to,League_from,League_to))
 
 # Découpage de la variable plus_value en facteurs
 

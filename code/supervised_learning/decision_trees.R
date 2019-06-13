@@ -21,6 +21,8 @@ cuts <- seq(plus_value_min,plus_value_max,by = round(plus_value_range/nblevels))
 
 transfers$plus_value <- cut(transfers$plus_value, breaks = c(plus_value_min,0,plus_value_max))
 
+transfers <- subset(transfers, select = -c(Team_from,Team_to,League_from,League_to))
+
 
 # Séparation des sous-ensembles d'apprentissage et de test
 X <- subset(transfers,select = -c(plus_value))
@@ -52,7 +54,7 @@ taux_erreur = length(erreur)/length(ztest)
 
 # fit model
 WOW(J48)
-fit <- J48(zapp~., data=Eapp)
+fit <- J48(zapp~., data=Eapp, control = Weka_control(C = 0.28))
 # summarize the fit
 print(fit)
 # make predictions
@@ -65,9 +67,7 @@ taux_erreur = length(erreur)/length(ztest)
 
 # fit model
 
-#On supprime provisoirement les teams/leagues, trop de caractères spéciaux
-Xapp <- subset(Xapp, select = -c(Team_from,Team_to,League_from,League_to))
-fit <- C5.0(x = Xapp, y = zapp,trials = 3)
+fit <- C5.0(x = Xapp, y = zapp,trials = 10, control = C5.0Control(CF = 0.32))
 # summarize the fit
 plot(fit)
 # make predictions

@@ -6,6 +6,7 @@ source("code/SY09/separ2.R")
 
 # Récupération des données
 transfers <- read.csv("data/clean_transfers.csv")
+transfers <- subset(transfers, select = -c(Team_from,Team_to,League_from,League_to))
 
 # Découpage de la variable plus_value en facteurs
 
@@ -39,7 +40,6 @@ taux_erreur = length(erreur)/length(ztest)
 
 # RandomForest
 
-Eapp <- subset(Eapp, select = -c(Team_to,Team_from))
 model <- randomForest(zapp ~ ., data = Eapp, ntree = 1000, na.action = na.omit)
 predictions <- predict(model, Xtest)
 #Mesure de l'erreur commise

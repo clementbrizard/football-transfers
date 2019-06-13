@@ -3,6 +3,7 @@ source("code/SY09/separ2.R")
 
 # Récupération des données
 transfers <- read.csv("data/clean_transfers.csv")
+transfers <- subset(transfers, select = -c(Team_from,Team_to,League_from,League_to))
   
 X <- subset(transfers,select = -c(plus_value))
 z <- transfers$plus_value
