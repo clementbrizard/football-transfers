@@ -198,7 +198,7 @@ for(i in (1:10)){
     train <- LRdata[folds!=j,]
     test <- LRdata[folds==j,]
     
-    bag <- bagging(class~., data=train) ## tree
+    bag <- bagging(class ~ ., data=train) ## tree
     yhat <-predict(bag,newdata=test) ## predict pvalue
     perd <-table(test$class,yhat) # compare
     error <- (1-sum(diag(perd))/(nrow(test))) ## error
@@ -256,7 +256,7 @@ CV.bt<-rep(0,10)
 for(i in (1:10)){
   for(j in (1:K)){
     train <- LRdata[folds!=j,]
-    tree <- rpart(train$class ~ ., data=train)
+    tree <- rpart(train$class ~ . , data=train)
     
     test <- LRdata[folds==j,]
     
@@ -268,4 +268,28 @@ for(i in (1:10)){
 }
 CV.bt <- mean(CV.bt)  
 CV.bt # 0.2428844
+
+
+
+
+n <- nrow(LRdata)
+K<-10
+folds=sample(1:K,n,replace=TRUE)
+CV.bt<-rep(0,10)
+for(i in (1:10)){
+  for(j in (1:K)){
+    train <- LRdata[folds!=j,]
+    tree <- rpart(train$class ~ Age+Market_value+Position+Type_Team_from+Type_League_from+Type_Team_to+ Type_League_to+Season , data=train, control = rpart.control(minsplit = 1000,cp = 0.05))
+    
+    test <- LRdata[folds==j,]
+    
+    yhat<-predict(tree,newdata=test,type='class')
+    perf <-table(test$class,yhat)
+    CV.bt[i] <- CV.bt[i]  + (1-sum(diag(perf))/nrow(test))
+  }
+  CV.bt[i]<-CV.bt[i]/K
+}
+CV.bt <- mean(CV.bt)  
+CV.bt # sans le controll 0.2380931 , avec le controll : 0.2936062
+
 
