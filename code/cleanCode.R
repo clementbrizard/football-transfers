@@ -11,13 +11,16 @@ install.packages("FactoMineR")
 library(FactoMineR)
 
 res.famd <- FAMD(dataset, graph = FALSE)
-fviz_screeplot(res.famd) #plot famd
+fviz_screeplot(res.famd, addlabels=TRUE) #plot famd
 
 # Graphique des variables
 fviz_famd_var(res.famd, repel = TRUE)
-# Contribution ?? la premi??re dimension
+# Contribution aux dimensions
+par(mfrow = c(2,2))
 fviz_contrib(res.famd, "var", axes = 1)
-# Contribution ?? la deuxi??me dimension
+fviz_contrib(res.famd, "var", axes = 2)
+fviz_contrib(res.famd, "var", axes = 3)
+fviz_contrib(res.famd, "var", axes = 4)
 fviz_contrib(res.famd, "var", axes = 5)
 
 
@@ -40,6 +43,7 @@ tst <- as.data.frame(scale(regData[2295:3440,-3]))
 y.tst <- regData[2295:3440, 3]
 
 lm.model <- step(lm(y~., data = app), direction="backward")
+summary(lm.model)
 ypred <- predict(lm.model, newdata = tst)
 mean((y.tst-ypred)^2) # l'erreur = 2.866465e+13 , super petit c'est bizarre car c'est TROP BIEN comme erreur
 
@@ -50,7 +54,21 @@ norm <- as.data.frame(apply(regData[,-c(3)], 2, scale))
 class <- regData$plus_value
 regData <- as.data.frame(cbind(norm, class = class))
 
+scatter.smooth(x=regData$Market_value+regData$Market_value, y=regData$class, main="Plus_value ~ Age+Market_value")
+   
+shapiro.test(regData$class)
+ ##
+cor(regData$Age, regData$Market_value)
+cor(regData$Age, regData$class)
+cor(regData$class, regData$Market_value)
 
+  ## another method to verify error
+
+library(DAAG)
+cvResults <- suppressWarnings(CVlm(data=regData, form.lm=class ~ ., m=10, dots=FALSE, seed=29, legend.pos="topleft",  printit=FALSE, main="Small symbols are predicted values while bigger ones are actuals."));  # performs the CV
+attr(cvResults, 'ms')
+
+  ## m??thode principale
 p <- ncol(regData)
 n <- nrow(regData)
 K<-10
@@ -229,5 +247,25 @@ CV.c50  ## 0.2596045
 
 
 
+## binary tree
 
+n <- nrow(LRdata)
+K<-10
+folds=sample(1:K,n,replace=TRUE)
+CV.bt<-rep(0,10)
+for(i in (1:10)){
+  for(j in (1:K)){
+    train <- LRdata[folds!=j,]
+    tree <- rpart(train$class ~ ., data=train)
+    
+    test <- LRdata[folds==j,]
+    
+    yhat<-predict(tree,newdata=test,type='class')
+    perf <-table(test$class,yhat)
+    CV.bt[i] <- CV.bt[i]  + (1-sum(diag(perf))/nrow(test))
+  }
+  CV.bt[i]<-CV.bt[i]/K
+}
+CV.bt <- mean(CV.bt)  
+CV.bt # 0.2428844
 
