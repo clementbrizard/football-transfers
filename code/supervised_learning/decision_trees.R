@@ -81,7 +81,7 @@ taux_erreur = length(erreur)/length(ztest)
 
 
 ## Nouvelle version
-# Algo j48 ## non fonctionnel pour l'instant 
+# Algo j48 || C48 ?## non fonctionnel pour l'instant car je n'arrive pas à avoir la library
 p <- ncol(LRdata)
 K<-10
 folds=sample(1:K,n,replace=TRUE)
@@ -99,17 +99,39 @@ for(i in (1:10)){
 CV.j48 <- mean(CV.j48)
 CV.j48
 
-# Algo C4.5 ## non fonctionnel pour l'instant 
+  ## Boosted CART
+p <- ncol(LRdata)
+K<-10
+folds=sample(1:K,n,replace=TRUE)
+CV.bag<-rep(0,10)
+for(i in (1:10)){
+  for(j in (1:K)) {
+    train <- LRdata[folds!=j,]
+    test <- LRdata[folds==j,]
+    
+    bag <- bagging(class~., data=train) ## tree
+    yhat <-predict(bag,newdata=test) ## predict pvalue
+    perd <-table(test$class,yhat) # compare
+    error <- (1-sum(diag(perd))/(nrow(test))) ## error
+    CV.bag[i] <- CV.bag[i] + error
+  }
+  CV.bag[i]<-CV.bag[i]/K
+}
+CV.bag <- mean(CV.bag)
+CV.bag # 0.0174079
+
+# Algo C5,0
     ## sans cv 
 train <- LRdata[1:2294,-c(10)]
-ytain <- LRdata[1:2294,c(10)]
+ytrain <- LRdata[1:2294,c(10)]
 test <- LRdata[2294:3440,-c(10)]
 ytest <- LRdata[2294:3440,-c(10)]
 
-fit <- C5.0(x = train, y = ytain,trials = 10, control = C5.0Control(CF = 0.32))
+fit <- C5.0(x = train, y = ytrain)
+plot(fit,type="s",main="Decision Tree")
 predictions <- predict(fit, test)
 perf.bag <- table(predictions, ytest)
-(1-sum(diag(perf.bag))/nrow(test)) # erreur sans cv : 0.6931125
+(1-sum(diag(perf.bag))/nrow(test)) # erreur sans cv : 0.6870096
 
 
     ## avec cv
@@ -120,15 +142,15 @@ CV.c50<-rep(0,10)
 for(i in (1:10)){
   for(j in (1:K)) {
     train <- LRdata[folds!=j,]
-    c50 <- C5.0(x = train, y = train$class,trials = 10, control = C5.0Control(CF = 0.32),rules=TRUE)
     test <- LRdata[folds==j,]
-    yhat.bag<-predict(c50,newdata=test)
-    perf.bag <-table(test$class,yhat.bag)
-    print(nrow(test))
-    print(1 - sum(diag(perf.bag)))
-    CV.for[i] <- CV.for[i] + ((1-sum(diag(perf.bag)))/nrow(test))
+    
+    c50 <- C5.0(x = train[,-c(p)], y = train$class) ## tree
+    yhat <-predict(c50,newdata=test[,-c(p)]) ## predict pvalue
+    perd <-table(test$class,yhat) # compare
+    error <- (1-(sum(diag(perd))/sum(perd))) ## error
+    CV.c50[i] <- CV.c50[i] + error
   }
   CV.c50[i]<-CV.c50[i]/K
 }
 CV.c50 <- mean(CV.c50)
-CV.c50
+CV.c50  ## 0.01721717
