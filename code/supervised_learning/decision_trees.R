@@ -11,6 +11,8 @@ source("code/SY09/separ2.R")
 # Récupération des données
 transfers <- read.csv("data/clean_transfers.csv")
 
+old <- read.csv("data/original_transfers.csv", header = T)
+summary(old$Age)
 # Découpage de la variable plus_value en facteurs
 
 # Découpage négatif / positif
