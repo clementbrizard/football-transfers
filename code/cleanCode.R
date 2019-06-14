@@ -72,6 +72,7 @@ cv.lm # avec step : 3.663871e+13 , sans step : 3.674823e+13
 
   ## 2 - LR
 
+library(nnet)
 # plus valu
 class <- regData[,c(3)]
 ## on set ?? 0 val qui sont <= 0 et ?? 1 les vals > 1
@@ -106,6 +107,7 @@ CV.lr ## error : 0.2743716
 
   ## 3 - Bayes Classifier
 
+library(e1071)
 K<-10
 folds=sample(1:K,n,replace=TRUE)
 CV.nv<-rep(0,10)
@@ -126,6 +128,7 @@ CV.nv ## error : 0.2864167, avec l autre m??thode : 0.280814 . So pareil, on cho
 
   ## 4 - Random Forest
 
+library(randomForest) 
 p <- ncol(LRdata)
 K<-10
 folds=sample(1:K,n,replace=TRUE)
@@ -145,6 +148,11 @@ CV.for  # 0.2484483
 
 
   ## 5 - Algo j48 || C48 ?## non fonctionnel pour l'instant car je n'arrive pas ?? avoir la library
+
+library(RWeka)
+
+levels(LRdata$class)[levels(LRdata$class) = 0] <- "Mauvaise_affaire"
+levels(LRdata$class)[levels(LRdata$class) = 1] <- "Bonne_affaire"
 p <- ncol(LRdata)
 K<-10
 folds=sample(1:K,n,replace=TRUE)
@@ -153,14 +161,14 @@ for(i in (1:10)){
   for(j in (1:K)) {
     j48 <- J48(class~., data=LRdata[folds!=j,], control = Weka_control(C = 0.28))
     test <- LRdata[folds==j,]
-    yhat.bag<-predict(c50,newdata=test)
+    yhat.bag<-predict(j48,newdata=test)
     perf.bag <-table(test$class,yhat.bag)
     CV.j48[i] <- CV.j48[i] + (1-sum(diag(perf.bag))/nrow(test))
   }
-  CV.c50[i]<-CV.c50[i]/K
+  CV.j48[i]<-CV.j48[i]/K
 }
 CV.j48 <- mean(CV.j48)
-CV.j48
+CV.j48 # 0.2670414
 
   ## 6 - Boosted CART
 p <- ncol(LRdata)
