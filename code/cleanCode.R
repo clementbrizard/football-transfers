@@ -48,6 +48,171 @@ ypred <- predict(lm.model, newdata = tst)
 mean((y.tst-ypred)^2) # l'erreur = 2.866465e+13 , super petit c'est bizarre car c'est TROP BIEN comme erreur
 
 
+  ## ++ analysis for linear reg
+
+model <- step(lm(plus_value~., data = regData), direction="backward")
+p <- length(lm.model$coefficients) - 1
+yi <- regData$plus_value
+yihat.lm <- fitted(lm.model)
+yihat.model <- fitted(model)
+mean((yi-yihat)^2) #907.5632
+
+plot(yi, yihat, asp = 1)
+abline(0, 1)
+# on remarque que la majoirt?? des points s'approche beaucoup de la droite x = y donc l'erreur est tr??s faible
+# entre les observations et les pr??dictions. Or il y en a aussi qui s'??loignent beaucoup
+
+
+# raw residuals
+rres <- resid(lm.model)
+plot(yihat.lm , rres)
+
+# Standardized residuals
+rstd <- rstandard(lm.model)
+plot(yihat.lm , rstd)
+
+# Les r??sidus studentis??s = r??sidus r??duits
+rstu <- rstudent(lm.model)
+plot(yihat.lm , rstu)
+abline(h=2,col="red")
+abline(h=-2,col="red")
+
+number_outliers <- length(which(rstu > 2 | rstu < -2))
+(number_outliers/nrow(regData))*100 #--> 2.5% des observations sont des points aberrants
+
+
+# QQ plot
+par(mfrow = c(3, 3))
+par(mfcol = c(2,2))
+qqnorm(rres, asp = 1)
+qqline(rres, dist = qnorm)
+
+# QQ-plot des r??sidus standardis??s
+qqnorm(rstd, asp = 1)
+qqline(rstd, dist = qnorm)
+
+# QQ-plot des r??sidus studentis??s
+qqnorm(rstu, asp = 1)
+qqline(rstu, dist = qnorm)
+
+# Des diff??rents graphes de Q-Q plot, on remarque que celui des raw residus est tr??s vertical, tandis
+# que les autres repr??sente une forme particuli??re donc nous ne pouvons pas conclure que 
+# les r??sidus  sont  ind??pendants et identiquement distribu??s (iid) !! Une des hypoth??ses du mod??le n'est pas valide
+
+#test de la normalit?? des r??sidus
+shapiro.test(rres)$p.value # 4.676641e-47
+shapiro.test(rstd)$p.value # 2.601035e-47
+# on a dans les 2 tests des p-value qui est tr??s petites donc on rej??te l'hyp de normalit??
+
+
+# Calcul de l???influence (hat-values, leverage,hii???)
+hv <- hatvalues(lm.model)
+h <- 2*(p + 1)/n
+outliers_hv <- which(hv > h)
+plot(yihat.lm, y, asp=1)
+abline(0, 1)
+points(yihat.lm[outliers_hv], y[outliers_hv], pch = 19)
+# leverage
+mean_leverage <- mean(hatvalues(lm.model))
+stability_leverage <- ((p+1)/n >= mean_leverage) # mod??le stable
+# Du graphe et de la comparaison entre la moyenne des hi et (p+1)/n, nous pouvons d??duire que la 
+# r??gression est stable ## je ne sais pas quoi conclure sur la var
+
+
+pts_aberrants <- which(rstu > 2 | rstu < -2)
+newdata <- regData
+for (k in pts_aberrants) {
+  newdata <- newdata[-k,]
+}
+
+
+app <- scale(newdata[1:2235,-3])
+y <- newdata[1:2235, 3]
+app <- as.data.frame(cbind(app, y))
+
+tst <- as.data.frame(scale(newdata[2236:3353,-3]))
+y.tst <- newdata[2236:3353, 3]
+
+lm.model <- step(lm(y~., data = app), direction="backward")
+summary(lm.model)
+ypred <- predict(lm.model, newdata = tst)
+mean((y.tst-ypred)^2)  #  2.955722e+13 m??me en enlevant les points aberrants l erreur est toujours grande !
+
+
+  ## on essaye avec dummy variables
+  # dummy for position
+regData <- dataset
+table(regData$Position)
+levels(regData$Position) <- c(1,2,3,4)
+regData$Position<- as.numeric(as.character(regData$Position))
+
+  # dummy Type_Team_from
+table(regData$Type_Team_from)
+levels(regData$Type_Team_from) <- c(1,2,3,4,5,6,7)
+regData$Type_Team_from<- as.numeric(as.character(regData$Type_Team_from))
+
+  # dummy Type_League_from
+table(regData$Type_League_from)
+levels(regData$Type_League_from) <- c(1,2,3,4,5,6)
+regData$Type_League_from<- as.numeric(as.character(regData$Type_League_from))
+
+# dummy Type_Team_to
+table(regData$Type_Team_to)
+levels(regData$Type_Team_to) <- c(1,2,3,4,5,6)
+regData$Type_Team_to<- as.numeric(as.character(regData$Type_Team_to))
+
+# dummy Type_League_to
+table(regData$Type_League_to)
+levels(regData$Type_League_to) <- c(1,2,3,4)
+regData$Type_League_to<- as.numeric(as.character(regData$Type_League_to))
+
+# dummy Season
+table(regData$Season)
+levels(regData$Season) <- c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+regData$Season<- as.numeric(as.character(regData$Season))
+
+
+
+
+
+app <- scale(regData[1:2294,-9])
+y <- regData[1:2294, 9]
+app <- as.data.frame(cbind(app, y))
+
+tst <- as.data.frame(scale(regData[2295:3440,-9]))
+y.tst <- regData[2295:3440, 9]
+
+lm.model <- step(lm(y~., data = app), direction="backward")
+summary(lm.model)
+ypred <- predict(lm.model, newdata = tst)
+mean((y.tst-ypred)^2) # 2.725123e+13
+
+  ### 
+
+norm <- as.data.frame(apply(regData[,-c(9)], 2, scale))
+class <- regData$plus_value
+regData <- as.data.frame(cbind(norm, class = class))
+
+
+p <- ncol(regData)
+n <- nrow(regData)
+K<-10
+folds=sample(1:K,n,replace=TRUE)
+cv.lm<-rep(0,10)
+for(i in (1:10)){
+  for(j in (1:K)){
+    lm.model <- lm(class ~ Position + Age + Type_Team_from + Type_League_from + Type_Team_to + Type_League_to + Season + Market_value, data = regData[folds!=j,])
+    test <- regData[folds==j,]
+    
+    ypred <- predict(lm.model, newdata = test)
+    cv.lm[i] <- cv.lm[i] + mean((test[,c(p)]-ypred)^2)
+  }
+  cv.lm[i]<-cv.lm[i]/K
+}
+cv.lm <- mean(cv.lm)  
+cv.lm # 3.416861e+13
+
+
 ## avec cv : 
 
 norm <- as.data.frame(apply(regData[,-c(3)], 2, scale))
