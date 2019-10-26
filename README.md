@@ -1,7 +1,7 @@
 # Top 250 football transfers
 https://www.kaggle.com/vardan95ghazaryan/top-250-football-transfers-from-2000-to-2018
 
-## Report
+## PDF Report
 [Click here.](https://github.com/clementbrizard/football-transfers/blob/master/sy09_rapport_%20DIDI-ALAOUI_LE-RAY_BRIZARD.pdf)
 
 ## To generate the PDF of .Rmd files :
